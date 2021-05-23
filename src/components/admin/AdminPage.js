@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
-import doctorAPI from "../api/doctor.api.js";
+import adminAPI from "../../api/admin.api";
 
 export default function ProfilePage() {
 	const [name, setName] = React.useState("");
@@ -9,10 +9,8 @@ export default function ProfilePage() {
 	const history = useHistory();
 
 	useEffect(() => {
-		doctorAPI.getProfile().then((res) => {
-			console.log(res);
+		adminAPI.getProfile().then((res) => {
 			if (res === 403) return history.push("/");
-			if (res === 409) return history.push("/admin/profile");
 
 			setName(res.data.name);
 			setSurname(res.data.surname);
@@ -23,11 +21,10 @@ export default function ProfilePage() {
 		<>
 			<div>
 				<h1>
-					Welcome back, {name} {surname}!
+					Welcome, admin: {name} {surname}
 				</h1>
-				<Link to="/patients">Patients Page</Link>
-				<br />
-				<Link to="/edit">Edit account</Link>
+				<Link to="/admin/register">Add a new doctor</Link> <br />
+				<Link to="/admin/viewDoctors">See all doctors</Link> <br />
 			</div>
 		</>
 	);

@@ -10,9 +10,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { isEmail } from "validator";
 import Cookies from "universal-cookie";
-import doctorAPI from "../api/doctor.api";
+import { Grid } from "@material-ui/core";
+import adminAPI from "../../api/admin.api";
 
 const useStyles = makeStyles((theme) => ({
+	container: {
+		background: "lightgray",
+	},
 	paper: {
 		marginTop: theme.spacing(8),
 		display: "flex",
@@ -32,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function SignIn() {
+export default function AdminSignIn() {
 	const [email, setEmail] = React.useState("");
 	const [password, setPassword] = React.useState("");
 	const [emailError, setEmailError] = React.useState("");
@@ -43,14 +47,13 @@ export default function SignIn() {
 
 	useEffect(() => {
 		if (!!cookies.get("token")) {
-			doctorAPI.getProfile().then((res) => {
-				if (res === 409) return history.push("/admin/profile");
-				if (res === 403) return cookies.remove("token", { path: "/" });
-				console.log("You are already logged in!");
-				history.push("/profile");
+			adminAPI.getProfile().then((res) => {
+				if (res === 403) return;
+
+				history.push("/admin/profile");
 			});
 		} // eslint-disable-next-line
-	}, [history]);
+	}, []);
 
 	const onEmailChange = (e) => {
 		setEmail(e.target.value);
@@ -82,18 +85,18 @@ export default function SignIn() {
 		}
 
 		if (!error) {
-			doctorAPI.login(email, password).then((res) => {
+			adminAPI.login(email, password).then((res) => {
 				if (res === 404) return setEmailError("Email not registered!");
 				if (res === 403) return setPasswordError("Wrong password!");
 
 				cookies.set("token", res, { path: "/" });
-				history.push("/profile");
+				history.push("/admin/profile");
 			});
 		}
 	};
 
 	return (
-		<Container component="main" maxWidth="xs">
+		<Container component="main" maxWidth="xs" className={classes.container}>
 			<CssBaseline />
 			<div className={classes.paper}>
 				<Avatar className={classes.avatar}>
@@ -140,9 +143,14 @@ export default function SignIn() {
 					>
 						Sign In
 					</Button>
-					<Link to="/admin" variant="body2">
-						Forgot password?
-					</Link>
+					<Grid container justify="flex-end">
+						<Grid item>
+							Not an admin?{" "}
+							<Link to="/" variant="body2">
+								Back to user login
+							</Link>
+						</Grid>
+					</Grid>
 				</form>
 			</div>
 		</Container>
