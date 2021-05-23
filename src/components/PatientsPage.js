@@ -279,7 +279,7 @@ export default function BasicTable() {
 							format="dd/MM/yyyy"
 							margin="normal"
 							id="birthday"
-							label="Patient birthday date (dd/mm/yyyy)"
+							label="Patient birthday date (dd/mm/yyyy) *"
 							value={selectedDate}
 							onChange={handleDateChange}
 							KeyboardButtonProps={{
@@ -287,6 +287,7 @@ export default function BasicTable() {
 							}}
 							error={!!birthdayError}
 							helperText={birthdayError}
+							fullWidth
 						/>
 					</MuiPickersUtilsProvider>
 					<TextField

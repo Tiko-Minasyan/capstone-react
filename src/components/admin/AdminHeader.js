@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
 	title: {
 		flexGrow: 1,
 	},
+	span: {
+		cursor: "pointer",
+	},
 }));
 
 export default function Header() {
@@ -70,7 +73,9 @@ export default function Header() {
 						<MenuIcon />
 					</IconButton>
 					<Typography variant="h6" className={classes.title}>
-						{admin.name} {admin.surname}
+						<span className={classes.span} onClick={profile}>
+							{admin.name} {admin.surname}
+						</span>
 					</Typography>
 					<div>
 						<IconButton
