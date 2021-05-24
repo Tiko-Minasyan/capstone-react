@@ -17,6 +17,7 @@ import {
 	DialogContentText,
 	DialogTitle,
 } from "@material-ui/core";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles({
 	table: {
@@ -24,6 +25,9 @@ const useStyles = makeStyles({
 	},
 	button: {
 		width: "16%",
+	},
+	hover: {
+		cursor: "pointer",
 	},
 });
 
@@ -33,6 +37,7 @@ export default function BasicTable() {
 	const [open, setOpen] = React.useState(false);
 
 	const classes = useStyles();
+	const history = useHistory();
 
 	const handleClickOpen = (doctor) => {
 		setOpen(true);
@@ -61,6 +66,10 @@ export default function BasicTable() {
 		});
 	}, []);
 
+	const openDoctor = (id) => {
+		history.push("/admin/viewDoctors/" + id);
+	};
+
 	return (
 		<div>
 			<TableContainer component={Paper}>
@@ -75,7 +84,12 @@ export default function BasicTable() {
 					</TableHead>
 					<TableBody>
 						{doctors.map((doctor) => (
-							<TableRow key={doctor.name}>
+							<TableRow
+								key={doctor.name}
+								hover
+								className={classes.hover}
+								onClick={() => openDoctor(doctor._id)}
+							>
 								<TableCell component="th" scope="row">
 									{doctor.name} {doctor.surname}
 								</TableCell>

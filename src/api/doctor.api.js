@@ -20,6 +20,7 @@ class doctorAPI {
 		return API.get("/doctors/profile").catch((e) => {
 			console.log(e.response);
 			if (e.response.status === 403) return 403;
+			if (e.response.status === 404) return 404;
 			if (e.response.status === 409) return 409;
 		});
 	}

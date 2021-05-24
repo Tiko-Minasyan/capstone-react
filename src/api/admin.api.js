@@ -41,6 +41,13 @@ class adminAPI {
 		});
 	}
 
+	getDoctor(id) {
+		return API.get("/admins/getDoctor/" + id).catch((e) => {
+			console.log("error: ", e.response);
+			return e.response.status;
+		});
+	}
+
 	deleteDoctor(doctor) {
 		return API.delete("/admins/doctor", { data: { doctor } }).catch((e) => {
 			console.log("error: ", e.response);

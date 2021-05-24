@@ -11,13 +11,14 @@ import LoginPage from "./components/LoginPage";
 import ProfilePage from "./components/ProfilePage";
 import EditPage from "./components/EditPage";
 import PatientsPage from "./components/PatientsPage";
+import PatientProfile from "./components/PatientProfile";
 
 import AdminLoginPage from "./components/admin/AdminLoginPage";
 import AdminPage from "./components/admin/AdminPage";
 import AdminRegisterPage from "./components/admin/AdminRegisterPage";
 import AdminDoctorsPage from "./components/admin/AdminDoctorsPage";
+import AdminDoctorProfile from "./components/admin/AdminDoctorProfile";
 import AdminHeader from "./components/admin/AdminHeader";
-import PatientProfile from "./components/PatientProfile";
 
 function App() {
 	setAuthToken();
@@ -25,18 +26,18 @@ function App() {
 	return (
 		<Router>
 			<Switch>
-				<Route path="/" exact={true}>
+				<Route path="/" exact>
 					<LoginPage />
 				</Route>
-				<Route path="/profile" exact={true}>
+				<Route path="/profile" exact>
 					<Header />
 					<ProfilePage />
 				</Route>
-				<Route path="/edit" exact={true}>
+				<Route path="/edit" exact>
 					<Header />
 					<EditPage />
 				</Route>
-				<Route path="/patients" exact={true}>
+				<Route path="/patients" exact>
 					<Header />
 					<PatientsPage />
 				</Route>
@@ -45,10 +46,10 @@ function App() {
 					<PatientProfile />
 				</Route>
 
-				<Route path="/admin/" exact={true}>
+				<Route path="/admin/" exact>
 					<AdminLoginPage />
 				</Route>
-				<Route path="/admin/profile" exact={true}>
+				<Route path="/admin/profile" exact>
 					<AdminHeader />
 					<AdminPage />
 				</Route>
@@ -56,9 +57,13 @@ function App() {
 					<AdminHeader />
 					<AdminRegisterPage />
 				</Route>
-				<Route path="/admin/viewDoctors">
+				<Route path="/admin/viewDoctors" exact>
 					<AdminHeader />
 					<AdminDoctorsPage />
+				</Route>
+				<Route path="/admin/viewDoctors/:id">
+					<AdminHeader />
+					<AdminDoctorProfile />
 				</Route>
 
 				<Route path="/">

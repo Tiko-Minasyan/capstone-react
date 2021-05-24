@@ -9,7 +9,6 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { isEmail } from "validator";
-// import Cookies from "universal-cookie";
 import doctorAPI from "../api/doctor.api";
 
 const useStyles = makeStyles((theme) => ({
@@ -38,16 +37,14 @@ export default function SignIn() {
 	const [emailError, setEmailError] = React.useState("");
 	const [passwordError, setPasswordError] = React.useState("");
 	const history = useHistory();
-	// const cookies = new Cookies();
 	const classes = useStyles();
 
 	useEffect(() => {
-		// if (!!cookies.get("token")) {
 		if (!!localStorage.getItem("token")) {
 			doctorAPI.getProfile().then((res) => {
 				if (res === 409) return history.push("/admin/profile");
-				// if (res === 403) return cookies.remove("token", { path: "/" });
 				if (res === 403) return localStorage.removeItem("token");
+				if (res === 404) return localStorage.removeItem("token");
 				console.log("You are already logged in!");
 				history.push("/profile");
 			});
@@ -88,7 +85,6 @@ export default function SignIn() {
 				if (res === 404) return setEmailError("Email not registered!");
 				if (res === 403) return setPasswordError("Wrong password!");
 
-				// cookies.set("token", res, { path: "/" });
 				localStorage.setItem("token", res);
 				history.push("/profile");
 			});

@@ -12,6 +12,7 @@ export default function ProfilePage() {
 		doctorAPI.getProfile().then((res) => {
 			console.log(res);
 			if (res === 403) return history.push("/");
+			if (res === 404) return history.push("/");
 			if (res === 409) return history.push("/admin/profile");
 
 			setName(res.data.name);

@@ -239,6 +239,7 @@ export default function Diagnoses() {
 				aria-labelledby="alert-dialog-title"
 				aria-describedby="alert-dialog-description"
 				fullWidth
+				fullScreen
 			>
 				<DialogTitle id="alert-dialog-title">Diagnosis</DialogTitle>
 				<DialogContent>
