@@ -8,7 +8,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
-import Cookies from "universal-cookie";
+// import Cookies from "universal-cookie";
 import { useHistory } from "react-router";
 import adminAPI from "../../api/admin.api";
 
@@ -55,8 +55,9 @@ export default function Header() {
 	};
 
 	const logout = () => {
-		const cookies = new Cookies();
-		cookies.remove("token");
+		// const cookies = new Cookies();
+		// cookies.remove("token");
+		localStorage.removeItem("token");
 		history.push("/");
 	};
 

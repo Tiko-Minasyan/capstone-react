@@ -9,7 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { isEmail } from "validator";
-import Cookies from "universal-cookie";
+// import Cookies from "universal-cookie";
 import { Grid } from "@material-ui/core";
 import adminAPI from "../../api/admin.api";
 
@@ -42,11 +42,12 @@ export default function AdminSignIn() {
 	const [emailError, setEmailError] = React.useState("");
 	const [passwordError, setPasswordError] = React.useState("");
 	const history = useHistory();
-	const cookies = new Cookies();
+	// const cookies = new Cookies();
 	const classes = useStyles();
 
 	useEffect(() => {
-		if (!!cookies.get("token")) {
+		// if (!!cookies.get("token")) {
+		if (!!localStorage.getItem("token")) {
 			adminAPI.getProfile().then((res) => {
 				if (res === 403) return;
 
@@ -89,7 +90,8 @@ export default function AdminSignIn() {
 				if (res === 404) return setEmailError("Email not registered!");
 				if (res === 403) return setPasswordError("Wrong password!");
 
-				cookies.set("token", res, { path: "/" });
+				// cookies.set("token", res, { path: "/" });
+				localStorage.setItem("token", res);
 				history.push("/admin/profile");
 			});
 		}

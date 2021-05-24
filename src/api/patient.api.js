@@ -22,9 +22,29 @@ class doctorAPI {
 		});
 	}
 
+	editPatient(id, name, surname, fatherName, birthday, phone, address) {
+		return API.patch("/patients/" + id, {
+			name,
+			surname,
+			fatherName,
+			birthday,
+			phone,
+			address,
+		}).catch((e) => {
+			console.log("error: ", e.response);
+			return e.response.status;
+		});
+	}
+
 	getPatient(id) {
 		return API.get("/patients/" + id).catch((e) => {
 			return e.response.status;
+		});
+	}
+
+	deletePatient(id) {
+		return API.delete("/patients/" + id).catch((e) => {
+			console.log(e.response);
 		});
 	}
 }

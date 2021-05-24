@@ -97,6 +97,7 @@ export default function BasicTable() {
 					</TableBody>
 				</Table>
 			</TableContainer>
+
 			<Dialog
 				open={open}
 				onClose={handleClose}

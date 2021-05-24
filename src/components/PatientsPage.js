@@ -32,8 +32,11 @@ const useStyles = makeStyles({
 	button: {
 		width: "16%",
 	},
-	addBtn: {
-		width: "50px",
+	flex: {
+		display: "flex",
+		justifyContent: "space-between",
+		padding: "0 10px",
+		alignItems: "center",
 	},
 });
 
@@ -142,6 +145,10 @@ export default function BasicTable() {
 		if (!surname) {
 			setSurnameError("Surname is missing!");
 			error = true;
+		} // eslint-disable-next-line
+		if (selectedDate === null || selectedDate == "Invalid Date") {
+			setBirthdayError("Invalid date!");
+			error = true;
 		}
 
 		const date = new Date(selectedDate);
@@ -199,6 +206,16 @@ export default function BasicTable() {
 
 	return (
 		<div>
+			<div className={classes.flex}>
+				<h2>Patients Page</h2>
+				<Button
+					startIcon={<AddCircleIcon />}
+					onClick={handleClickOpen}
+					variant="outlined"
+				>
+					Add new patient
+				</Button>
+			</div>
 			<TableContainer component={Paper}>
 				<Table className={classes.table} aria-label="simple table">
 					<TableHead>
@@ -207,11 +224,6 @@ export default function BasicTable() {
 							<TableCell>Patient Surname</TableCell>
 							<TableCell>Patient Father Name</TableCell>
 							<TableCell>Patient Age</TableCell>
-							<TableCell className={classes.addBtn}>
-								<IconButton onClick={handleClickOpen}>
-									<AddCircleIcon />
-								</IconButton>
-							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
