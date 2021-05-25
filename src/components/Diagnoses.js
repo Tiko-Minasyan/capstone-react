@@ -43,6 +43,9 @@ const useStyles = makeStyles({
 	error: {
 		color: "#f44336",
 	},
+	editField: {
+		marginBottom: "25px",
+	},
 });
 
 export default function Diagnoses() {
@@ -485,7 +488,7 @@ export default function Diagnoses() {
 			>
 				<DialogTitle id="alert-dialog-title">Diagnosis</DialogTitle>
 				<DialogContent>
-					{editing ? (
+					{editing ? ( //		EDIT DIAGNOSIS
 						<>
 							<DialogContentText>Complains</DialogContentText>
 							<p>{splitText(openedDiagnosis.complains)}</p> <hr />
@@ -505,6 +508,7 @@ export default function Diagnoses() {
 								onChange={onEditDiagnosisChange}
 								error={!!editDiagnosisError}
 								helperText={editDiagnosisError}
+								className={classes.editField}
 							/>
 							<DialogContentText>Research plan</DialogContentText>
 							<p>{splitText(openedDiagnosis.researchPlan)}</p>
@@ -524,6 +528,7 @@ export default function Diagnoses() {
 										fullWidth
 										onChange={(e) => onEditCureChange(e, index)}
 										value={cure}
+										className={classes.editField}
 									/>
 								))}
 								<Button startIcon={<AddCircleIcon />} onClick={addEditCure}>
@@ -551,6 +556,7 @@ export default function Diagnoses() {
 							/>
 						</>
 					) : (
+						//   READ DIAGNOSIS
 						<>
 							<DialogContentText>Complains</DialogContentText>
 							<p>{splitText(openedDiagnosis.complains)}</p> <hr />

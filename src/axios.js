@@ -11,7 +11,10 @@ export const setAuthToken = (token = localStorage.getItem("token")) => {
 };
 
 API.interceptors.response.use(
-	(res) => res,
+	(res) => {
+		// console.log("RES:", res);
+		return res;
+	},
 	(e) => {
 		return Promise.reject(e);
 	}
