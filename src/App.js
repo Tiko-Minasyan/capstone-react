@@ -10,6 +10,8 @@ import Header from "./components/Header";
 import LoginPage from "./components/LoginPage";
 import ProfilePage from "./components/ProfilePage";
 import EditPage from "./components/EditPage";
+import EditImagePage from "./components/EditImagePage";
+import EditPasswordPage from "./components/EditPasswordPage";
 import PatientsPage from "./components/PatientsPage";
 import PatientProfile from "./components/PatientProfile";
 
@@ -36,6 +38,14 @@ function App() {
 				<Route path="/edit" exact>
 					<Header />
 					<EditPage />
+				</Route>
+				<Route path="/edit/image">
+					<Header />
+					<EditImagePage />
+				</Route>
+				<Route path="/edit/password">
+					<Header />
+					<EditPasswordPage />
 				</Route>
 				<Route path="/patients" exact>
 					<Header />

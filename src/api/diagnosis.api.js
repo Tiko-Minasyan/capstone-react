@@ -7,14 +7,14 @@ class DiagnosisAPI {
 		});
 	}
 
-	add(text, id) {
-		return API.post("/diagnoses/" + id, { text }).catch((e) => {
+	add(id, data) {
+		return API.post("/diagnoses/" + id, data).catch((e) => {
 			console.log(e);
 		});
 	}
 
-	update(id, text) {
-		return API.patch("/diagnoses/" + id, { text }).catch((e) => {
+	update(id, data) {
+		return API.patch("/diagnoses/" + id, data).catch((e) => {
 			console.log(e);
 		});
 	}

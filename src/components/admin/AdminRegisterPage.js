@@ -35,12 +35,10 @@ export default function AdminSignIn() {
 	const [surname, setSurname] = React.useState("");
 	const [profession, setProfession] = React.useState("");
 	const [email, setEmail] = React.useState("");
-	const [password, setPassword] = React.useState("");
 	const [nameError, setNameError] = React.useState("");
 	const [surnameError, setSurnameError] = React.useState("");
 	const [professionError, setProfessionError] = React.useState("");
 	const [emailError, setEmailError] = React.useState("");
-	const [passwordError, setPasswordError] = React.useState("");
 	const history = useHistory();
 	const classes = useStyles();
 
@@ -62,11 +60,6 @@ export default function AdminSignIn() {
 	const onEmailChange = (e) => {
 		setEmail(e.target.value);
 		setEmailError("");
-	};
-
-	const onPasswordChange = (e) => {
-		setPassword(e.target.value);
-		setPasswordError("");
 	};
 
 	const formSubmit = (e) => {
@@ -92,21 +85,12 @@ export default function AdminSignIn() {
 			setEmailError("Wrong email format!");
 			error = true;
 		}
-		if (!password) {
-			setPasswordError("Password is missing!");
-			error = true;
-		} else if (password.length < 8) {
-			setPasswordError("Password is too short!");
-			error = true;
-		}
 
 		if (!error) {
-			adminAPI
-				.register(name, surname, profession, email, password)
-				.then((res) => {
-					if (res === 409) setEmailError("Email already registered!");
-					else history.push("/admin/profile");
-				});
+			adminAPI.register(name, surname, profession, email).then((res) => {
+				if (res === 409) setEmailError("Email already registered!");
+				else history.push("/admin/profile");
+			});
 		}
 	};
 
@@ -170,19 +154,6 @@ export default function AdminSignIn() {
 								onChange={onEmailChange}
 								error={!!emailError}
 								helperText={emailError}
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<TextField
-								variant="outlined"
-								fullWidth
-								name="password"
-								label="Password"
-								id="password"
-								value={password}
-								onChange={onPasswordChange}
-								error={!!passwordError}
-								helperText={passwordError}
 							/>
 						</Grid>
 					</Grid>

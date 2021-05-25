@@ -21,16 +21,22 @@ const useStyles = makeStyles((theme) => ({
 	title: {
 		flexGrow: 1,
 	},
-	span: {
+	pointer: {
 		cursor: "pointer",
+	},
+	name: {
+		marginRight: "10px",
 	},
 }));
 
 export default function Header() {
 	const [doctor, setDoctor] = React.useState({});
 	const [anchorEl, setAnchorEl] = React.useState(null);
+	const [anchorElLinks, setAnchorElLinks] = React.useState(null);
 
 	const open = Boolean(anchorEl);
+	const openLinks = Boolean(anchorElLinks);
+
 	const classes = useStyles();
 	const history = useHistory();
 
@@ -44,13 +50,31 @@ export default function Header() {
 		setAnchorEl(event.currentTarget);
 	};
 
+	const handleMenuLinks = (event) => {
+		setAnchorElLinks(event.currentTarget);
+	};
+
 	const handleClose = () => {
 		setAnchorEl(null);
+	};
+
+	const handleCloseLinks = () => {
+		setAnchorElLinks(null);
+	};
+
+	const allPatients = () => {
+		handleCloseLinks();
+		history.push("/patients");
 	};
 
 	const profile = () => {
 		handleClose();
 		history.push("/profile");
+	};
+
+	const edit = () => {
+		handleClose();
+		history.push("/edit");
 	};
 
 	const logout = () => {
@@ -63,19 +87,41 @@ export default function Header() {
 			<AppBar position="static">
 				<Toolbar>
 					<IconButton
+						aria-haspopup="true"
 						edge="start"
 						className={classes.menuButton}
 						color="inherit"
 						aria-label="menu"
+						onClick={handleMenuLinks}
 					>
 						<MenuIcon />
 					</IconButton>
+					<Menu
+						id="menu-appbar-links"
+						anchorEl={anchorElLinks}
+						anchorOrigin={{
+							vertical: "top",
+							horizontal: "right",
+						}}
+						keepMounted
+						transformOrigin={{
+							vertical: "top",
+							horizontal: "right",
+						}}
+						open={openLinks}
+						onClose={handleCloseLinks}
+					>
+						<MenuItem onClick={allPatients}>See All Patients</MenuItem>
+					</Menu>
 					<Typography variant="h6" className={classes.title}>
-						<span className={classes.span} onClick={profile}>
-							{doctor.name} {doctor.surname}, {doctor.profession}
+						<span className={classes.pointer} onClick={profile}>
+							Medical Center Application
 						</span>
 					</Typography>
 					<div>
+						<span>
+							{doctor.name} {doctor.surname}, {doctor.profession}
+						</span>
 						<IconButton
 							aria-label="account of current user"
 							aria-controls="menu-appbar"
@@ -101,6 +147,7 @@ export default function Header() {
 							onClose={handleClose}
 						>
 							<MenuItem onClick={profile}>Profile</MenuItem>
+							<MenuItem onClick={edit}>Edit</MenuItem>
 							<MenuItem onClick={logout}>Logout</MenuItem>
 						</Menu>
 					</div>

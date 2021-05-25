@@ -1,14 +1,15 @@
 import React, { useEffect } from "react";
-import axios from "axios";
+import doctorAPI from "../api/doctor.api";
 import {
 	Button,
 	Container,
-	CssBaseline,
 	Grid,
 	makeStyles,
 	TextField,
 	Typography,
 } from "@material-ui/core";
+import { useHistory } from "react-router";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -29,28 +30,24 @@ const useStyles = makeStyles((theme) => ({
 export default function EditPage() {
 	const [name, setName] = React.useState("");
 	const [surname, setSurname] = React.useState("");
-	const [oldPassword, setOldPassword] = React.useState("");
-	const [password, setPassword] = React.useState("");
-	const [confirmPassword, setConfirmPassword] = React.useState("");
+	const [phone, setPhone] = React.useState("");
+	const [address, setAddress] = React.useState("");
 	const [nameError, setNameError] = React.useState("");
 	const [surnameError, setSurnameError] = React.useState("");
-	const [oldPasswordError, setOldPasswordError] = React.useState("");
-	const [passwordError, setPasswordError] = React.useState("");
-	const [confirmPasswordError, setConfirmPasswordError] = React.useState("");
 
 	const classes = useStyles();
+	const history = useHistory();
 
 	useEffect(() => {
-		axios
-			.get("http://localhost:8000/users/profile")
-			.then((res) => {
-				setName(res.data.name);
-				setSurname(res.data.surname);
-			})
-			.catch((e) => {
-				console.log(e.response);
-			});
-	}, []);
+		doctorAPI.getProfile().then((res) => {
+			if (typeof res === "number") return history.push("/profile");
+
+			setName(res.data.name);
+			setSurname(res.data.surname);
+			setPhone(res.data.phone);
+			setAddress(res.data.address);
+		});
+	}, [history]);
 
 	const onNameChange = (e) => {
 		setName(e.target.value);
@@ -62,28 +59,36 @@ export default function EditPage() {
 		setSurnameError("");
 	};
 
-	const onOldPasswordChange = (e) => {
-		setOldPassword(e.target.value);
-		setOldPasswordError("");
+	const onPhoneChange = (e) => {
+		setPhone(e.target.value);
 	};
 
-	const onPasswordChange = (e) => {
-		setPassword(e.target.value);
-		setPasswordError("");
-	};
-
-	const onConfirmPasswordChange = (e) => {
-		setConfirmPassword(e.target.value);
-		setConfirmPasswordError("");
+	const onAddressChange = (e) => {
+		setAddress(e.target.value);
 	};
 
 	const formSubmit = (e) => {
 		e.preventDefault();
+		let error = false;
+
+		if (!name) {
+			setNameError("Name cannot be empty!");
+			error = true;
+		}
+		if (!surname) {
+			setSurnameError("Surname cannot be empty!");
+			error = true;
+		}
+
+		if (!error) {
+			doctorAPI.update(name, surname, phone, address).then(() => {
+				history.push("/profile");
+			});
+		}
 	};
 
 	return (
 		<Container component="main" maxWidth="xs">
-			<CssBaseline />
 			<div className={classes.paper}>
 				<Typography component="h1" variant="h5">
 					Edit Account
@@ -109,7 +114,7 @@ export default function EditPage() {
 								variant="outlined"
 								fullWidth
 								id="surname"
-								label="surname"
+								label="Surname"
 								name="surname"
 								value={surname}
 								onChange={onSurnameChange}
@@ -122,44 +127,21 @@ export default function EditPage() {
 						variant="outlined"
 						margin="normal"
 						fullWidth
-						autoFocus
-						name="oldPassword"
-						label="Old password"
-						type="password"
-						id="oldPassword"
-						autoComplete="current-password"
-						value={oldPassword}
-						onChange={onOldPasswordChange}
-						error={!!oldPasswordError}
-						helperText={oldPasswordError}
+						name="phone"
+						label="Phone number"
+						id="phone"
+						value={phone}
+						onChange={onPhoneChange}
 					/>
 					<TextField
 						variant="outlined"
 						margin="normal"
 						fullWidth
-						name="password"
-						label="Password"
-						type="password"
-						id="password"
-						autoComplete="current-password"
-						value={password}
-						onChange={onPasswordChange}
-						error={!!passwordError}
-						helperText={passwordError}
-					/>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						fullWidth
-						name="confirmPassword"
-						label="Confirm pasword"
-						type="password"
-						id="confirmPassword"
-						autoComplete="current-password"
-						value={confirmPassword}
-						onChange={onConfirmPasswordChange}
-						error={!!confirmPasswordError}
-						helperText={confirmPasswordError}
+						name="address"
+						label="Address"
+						id="address"
+						value={address}
+						onChange={onAddressChange}
 					/>
 					<Button
 						type="submit"
@@ -170,6 +152,18 @@ export default function EditPage() {
 					>
 						Update account
 					</Button>
+					<Grid container>
+						<Grid item xs>
+							<Link to="/edit/image" variant="body2">
+								Edit profile picture
+							</Link>
+						</Grid>
+						<Grid item>
+							<Link to="/edit/password" variant="body2">
+								Edit password
+							</Link>
+						</Grid>
+					</Grid>
 				</form>
 			</div>
 		</Container>

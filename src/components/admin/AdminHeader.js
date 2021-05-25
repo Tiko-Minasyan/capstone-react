@@ -21,16 +21,22 @@ const useStyles = makeStyles((theme) => ({
 	title: {
 		flexGrow: 1,
 	},
-	span: {
+	pointer: {
 		cursor: "pointer",
+	},
+	name: {
+		marginRight: "10px",
 	},
 }));
 
 export default function Header() {
 	const [admin, setAdmin] = React.useState({});
 	const [anchorEl, setAnchorEl] = React.useState(null);
+	const [anchorElLinks, setAnchorElLinks] = React.useState(null);
 
 	const open = Boolean(anchorEl);
+	const openLinks = Boolean(anchorElLinks);
+
 	const classes = useStyles();
 	const history = useHistory();
 
@@ -44,8 +50,26 @@ export default function Header() {
 		setAnchorEl(event.currentTarget);
 	};
 
+	const handleMenuLinks = (event) => {
+		setAnchorElLinks(event.currentTarget);
+	};
+
 	const handleClose = () => {
 		setAnchorEl(null);
+	};
+
+	const handleCloseLinks = () => {
+		setAnchorElLinks(null);
+	};
+
+	const allDoctors = () => {
+		handleCloseLinks();
+		history.push("/admin/viewDoctors");
+	};
+
+	const newDoctor = () => {
+		handleCloseLinks();
+		history.push("/admin/register");
 	};
 
 	const profile = () => {
@@ -63,19 +87,43 @@ export default function Header() {
 			<AppBar position="static">
 				<Toolbar>
 					<IconButton
+						aria-haspopup="true"
 						edge="start"
 						className={classes.menuButton}
 						color="inherit"
 						aria-label="menu"
+						onClick={handleMenuLinks}
 					>
 						<MenuIcon />
 					</IconButton>
+					<Menu
+						id="menu-appbar-links"
+						anchorEl={anchorElLinks}
+						anchorOrigin={{
+							vertical: "top",
+							horizontal: "right",
+						}}
+						keepMounted
+						transformOrigin={{
+							vertical: "top",
+							horizontal: "right",
+						}}
+						open={openLinks}
+						onClose={handleCloseLinks}
+					>
+						<MenuItem onClick={allDoctors}>See All Doctors</MenuItem>
+						<MenuItem onClick={newDoctor}>Add a New Doctor</MenuItem>
+					</Menu>
 					<Typography variant="h6" className={classes.title}>
-						<span className={classes.span} onClick={profile}>
-							{admin.name} {admin.surname}
+						<span className={classes.pointer} onClick={profile}>
+							Medical Center Application
+							{/* {admin.name} {admin.surname} */}
 						</span>
 					</Typography>
 					<div>
+						<span className={classes.name}>
+							{admin.name} {admin.surname}
+						</span>
 						<IconButton
 							aria-label="account of current user"
 							aria-controls="menu-appbar"

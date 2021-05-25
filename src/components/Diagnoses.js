@@ -16,6 +16,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
+import AddCircleIcon from "@material-ui/icons/AddCircle";
+import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 
 const useStyles = makeStyles({
 	diagnoses: {
@@ -38,21 +40,43 @@ const useStyles = makeStyles({
 	ownDiagnosis: {
 		background: "lightgray",
 	},
+	error: {
+		color: "#f44336",
+	},
 });
 
 export default function Diagnoses() {
 	const [diagnoses, setDiagnoses] = React.useState([]);
 	const [doctorId, setDoctorId] = React.useState("");
-	const [newDiagnosisText, setNewDiagnosisText] = React.useState("");
-	const [diagnosisTextError, setDiagnosisTextError] = React.useState("");
 	const [openedDiagnosis, setOpenedDiagnosis] = React.useState({});
+
+	const [complains, setComplains] = React.useState("");
+	const [anamnesis, setAnamnesis] = React.useState("");
+	const [objectiveStatus, setObjectiveStatus] = React.useState("");
+	const [diagnosis, setDiagnosis] = React.useState("");
+	const [researchPlan, setResearchPlan] = React.useState("");
+	const [cures, setCures] = React.useState([]);
+	const [finalDiagnosis, setFinalDiagnosis] = React.useState("");
+	const [complainsError, setComplainsError] = React.useState("");
+	const [anamnesisError, setAnamnesisError] = React.useState("");
+	const [objectiveStatusError, setObjectiveStatusError] = React.useState("");
+	const [diagnosisError, setDiagnosisError] = React.useState("");
+	const [researchPlanError, setResearchPlanError] = React.useState("");
+	const [curesError, setCuresError] = React.useState("");
+
+	// const [editComplains, setEditComplains] = React.useState("");
+	// const [editAnamnesis, setEditAnamnesis] = React.useState("");
+	// const [editObjectiveStatus, setEditObjectiveStatus] = React.useState("");
+	const [editDiagnosis, setEditDiagnosis] = React.useState("");
+	// const [editResearchPlan, setEditResearchPlan] = React.useState("");
+	const [editCures, setEditCures] = React.useState([]);
+	const [editFinalDiagnosis, setEditFinalDiagnosis] = React.useState("");
+	const [editDiagnosisError, setEditDiagnosisError] = React.useState("");
 
 	const [open, setOpen] = React.useState(false);
 	const [openDiagnosis, setOpenDiagnosis] = React.useState(false);
 	const [ownDiagnosis, setOwnDiagnosis] = React.useState(false);
 	const [editing, setEditing] = React.useState(false);
-	const [editText, setEditText] = React.useState("");
-	const [editTextError, setEditTextError] = React.useState("");
 
 	const { id } = useParams();
 	const classes = useStyles();
@@ -61,11 +85,13 @@ export default function Diagnoses() {
 		setOpenDiagnosis(true);
 	};
 
-	const handleClickOpen = (index, id) => {
+	const handleClickOpen = (index, id, isFinished) => {
 		setOpen(true);
 		setOpenedDiagnosis(diagnoses[index]);
-		setOwnDiagnosis(id === doctorId);
-		setEditText(diagnoses[index].details);
+		setOwnDiagnosis(id === doctorId && !isFinished);
+
+		setEditDiagnosis(diagnoses[index].diagnosis);
+		setEditCures([]);
 	};
 
 	const handleClose = () => {
@@ -78,50 +104,162 @@ export default function Diagnoses() {
 		setOpenDiagnosis(false);
 	};
 
-	const onTextChange = (e) => {
-		setNewDiagnosisText(e.target.value);
-		setDiagnosisTextError("");
+	const onComplainsChange = (e) => {
+		setComplains(e.target.value);
+		setComplainsError("");
 	};
 
-	const onEditTextChange = (e) => {
-		setEditText(e.target.value);
-		setEditTextError("");
+	const onAnamnesisChange = (e) => {
+		setAnamnesis(e.target.value);
+		setAnamnesisError("");
+	};
+
+	const onObjectiveStatusChange = (e) => {
+		setObjectiveStatus(e.target.value);
+		setObjectiveStatusError("");
+	};
+
+	const onDiagnosisChange = (e) => {
+		setDiagnosis(e.target.value);
+		setDiagnosisError("");
+	};
+
+	const onResearchPlanChange = (e) => {
+		setResearchPlan(e.target.value);
+		setResearchPlanError("");
+	};
+
+	const onCureChange = (e, index) => {
+		const newCures = [...cures];
+		newCures[index] = e.target.value;
+		setCures(newCures);
+		setCuresError("");
+	};
+
+	const onFinalDiagnosisChange = (e) => {
+		setFinalDiagnosis(e.target.value);
+	};
+
+	const onEditDiagnosisChange = (e) => {
+		setEditDiagnosis(e.target.value);
+		setEditDiagnosisError("");
+	};
+
+	const onEditCureChange = (e, index) => {
+		const newCures = [...editCures];
+		newCures[index] = e.target.value;
+		setEditCures(newCures);
+	};
+
+	const onEditFinalDiagnosisChange = (e) => {
+		setEditFinalDiagnosis(e.target.value);
 	};
 
 	useEffect(() => {
 		getDiagnoses(); // eslint-disable-next-line
 	}, []);
 
+	const addCure = () => {
+		if (cures[cures.length - 1] !== "") {
+			setCures([...cures, ""]);
+			setCuresError("");
+		}
+	};
+
+	const addEditCure = () => {
+		if (editCures[editCures.length - 1] !== "") {
+			setEditCures([...editCures, ""]);
+		}
+	};
+
+	const removeCure = () => {
+		const newCures = [...cures];
+		newCures.pop();
+		setCures(newCures);
+	};
+
+	const removeEditCure = () => {
+		const newCures = [...editCures];
+		newCures.pop();
+		setEditCures(newCures);
+	};
+
 	const addDiagnosis = () => {
-		diagnosisAPI.add(newDiagnosisText, id).then(() => {
-			setOpenDiagnosis(false);
-			setNewDiagnosisText("");
-			getDiagnoses();
-		});
+		let error = false;
+
+		console.log(cures.length);
+
+		if (!complains) {
+			setComplainsError("Complains are missing!");
+			error = true;
+		}
+		if (!anamnesis) {
+			setAnamnesisError("Anamnesis is missing!");
+			error = true;
+		}
+		if (!objectiveStatus) {
+			setObjectiveStatusError("Objective status is missing!");
+			error = true;
+		}
+		if (!diagnosis) {
+			setDiagnosisError("Diagnosis is missing!");
+			error = true;
+		}
+		if (!researchPlan) {
+			setResearchPlanError("Research plan is missing!");
+			error = true;
+		}
+		if (cures.length === 0 || (cures.length === 1 && cures[0] === "")) {
+			setCuresError("Cures are missing!");
+			error = true;
+		}
+
+		if (!error) {
+			if (cures[cures.length - 1] === "") cures.pop();
+
+			const data = {
+				complains,
+				anamnesis,
+				objectiveStatus,
+				diagnosis,
+				researchPlan,
+				cures,
+				finalDiagnosis,
+			};
+
+			diagnosisAPI.add(id, data).then(() => {
+				setOpenDiagnosis(false);
+
+				setComplains("");
+				setAnamnesis("");
+				setObjectiveStatus("");
+				setDiagnosis("");
+				setResearchPlan("");
+				setCures([]);
+				setFinalDiagnosis("");
+
+				getDiagnoses();
+			});
+		}
+	};
+
+	const timeFormat = (str) => {
+		const date = str.split("T")[0].split("-");
+		const time = str.split("T")[1].split(":");
+		return (
+			date[2] + "/" + date[1] + "/" + date[0] + " " + time[0] + ":" + time[1]
+		);
 	};
 
 	const getDiagnoses = () => {
 		diagnosisAPI.getDiagnoses(id).then((res) => {
 			if (res) {
-				let diagnoses = [];
 				res.data.diagnoses.forEach((item) => {
-					const date = item.createdAt.split("T")[0].split("-");
-					const time = item.createdAt.split("T")[1].split(":");
-					item.createdAt =
-						date[2] +
-						"/" +
-						date[1] +
-						"/" +
-						date[0] +
-						" " +
-						time[0] +
-						":" +
-						time[1];
-
-					diagnoses.unshift(item);
+					item.createdAt = timeFormat(item.createdAt);
+					item.updatedAt = timeFormat(item.updatedAt);
 				});
 
-				setDiagnoses(diagnoses);
+				setDiagnoses(res.data.diagnoses);
 				setDoctorId(res.data.doctorId);
 			}
 		});
@@ -131,14 +269,28 @@ export default function Diagnoses() {
 		if (text) return text.split("\n").map((str) => <p key={1}>{str}</p>);
 	};
 
-	const editDiagnosis = () => {
+	const updateDiagnosis = () => {
 		setEditing(true);
 	};
 
 	const saveChanges = () => {
-		if (!editText) setEditTextError("Diagnosis cannot be empty!");
-		else {
-			diagnosisAPI.update(openedDiagnosis._id, editText).then(() => {
+		let error = false;
+
+		if (!editDiagnosis) {
+			setEditDiagnosisError("Diagnosis is missing!");
+			error = true;
+		}
+
+		if (!error) {
+			if (editCures[editCures.length - 1] === "") editCures.pop();
+
+			const data = {
+				diagnosis: editDiagnosis,
+				cures: [...openedDiagnosis.cures, ...editCures],
+				finalDiagnosis: editFinalDiagnosis,
+			};
+
+			diagnosisAPI.update(openedDiagnosis._id, data).then(() => {
 				handleClose();
 				getDiagnoses();
 			});
@@ -162,14 +314,17 @@ export default function Diagnoses() {
 				</Button>
 			</div>
 
+			{/* DIAGNOSES TABLE */}
 			<TableContainer component={Paper}>
 				<Table className={classes.table} aria-label="simple table">
 					<TableHead>
 						<TableRow>
 							<TableCell>Doctor profession</TableCell>
-							<TableCell>Diagnosis text</TableCell>
+							<TableCell>Diagnosis</TableCell>
 							<TableCell>Doctor full name</TableCell>
+							<TableCell>Is finished</TableCell>
 							<TableCell>Create date</TableCell>
+							<TableCell>Update date</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -177,14 +332,20 @@ export default function Diagnoses() {
 							<TableRow
 								key={diagnosis._id}
 								className={
-									diagnosis.doctor._id === doctorId && classes.ownDiagnosis
+									diagnosis.doctor._id === doctorId ? classes.ownDiagnosis : ""
 								}
 							>
 								<TableCell scope="row">{diagnosis.doctor.profession}</TableCell>
 								<TableCell>
 									<Button
 										variant="outlined"
-										onClick={() => handleClickOpen(index, diagnosis.doctor._id)}
+										onClick={() =>
+											handleClickOpen(
+												index,
+												diagnosis.doctor._id,
+												diagnosis.isFinished
+											)
+										}
 									>
 										View diagnosis
 									</Button>
@@ -193,13 +354,16 @@ export default function Diagnoses() {
 									{diagnosis.doctor.name} {diagnosis.doctor.surname}{" "}
 									{diagnosis.doctor._id === doctorId && "(You)"}
 								</TableCell>
+								<TableCell>{diagnosis.isFinished ? "Yes" : "No"}</TableCell>
 								<TableCell>{diagnosis.createdAt}</TableCell>
+								<TableCell>{diagnosis.updatedAt}</TableCell>
 							</TableRow>
 						))}
 					</TableBody>
 				</Table>
 			</TableContainer>
 
+			{/* WRITE NEW DIAGNOSIS DIALOG */}
 			<Dialog
 				open={openDiagnosis}
 				onClose={handleDiagnosisClose}
@@ -215,12 +379,89 @@ export default function Diagnoses() {
 						multiline
 						margin="dense"
 						id="text"
-						label="Text *"
+						label="Complains"
 						fullWidth
-						onChange={onTextChange}
-						value={newDiagnosisText}
-						error={diagnosisTextError}
-						helperText={diagnosisTextError}
+						onChange={onComplainsChange}
+						value={complains}
+						error={!!complainsError}
+						helperText={complainsError}
+					/>
+					<TextField
+						multiline
+						margin="dense"
+						id="anamnesis"
+						label="Anamnesis"
+						fullWidth
+						onChange={onAnamnesisChange}
+						value={anamnesis}
+						error={!!anamnesisError}
+						helperText={anamnesisError}
+					/>
+					<TextField
+						multiline
+						margin="dense"
+						id="status"
+						label="Objective Status"
+						fullWidth
+						onChange={onObjectiveStatusChange}
+						value={objectiveStatus}
+						error={!!objectiveStatusError}
+						helperText={objectiveStatusError}
+					/>
+					<TextField
+						multiline
+						margin="dense"
+						id="diagnosis"
+						label="Diagnosis"
+						fullWidth
+						onChange={onDiagnosisChange}
+						value={diagnosis}
+						error={!!diagnosisError}
+						helperText={diagnosisError}
+					/>
+					<TextField
+						multiline
+						margin="dense"
+						id="plan"
+						label="Research Plan"
+						fullWidth
+						onChange={onResearchPlanChange}
+						value={researchPlan}
+						error={!!researchPlanError}
+						helperText={researchPlanError}
+					/>
+					<p>Cures / recommendations</p>
+					{curesError && <p className={classes.error}>Cures are missing!</p>}
+					{cures.map((cure, index) => (
+						<TextField
+							key={index}
+							multiline
+							margin="dense"
+							id="cure"
+							label={`Cure / recommendation ${index + 1}`}
+							fullWidth
+							onChange={(e) => onCureChange(e, index)}
+							value={cure}
+						/>
+					))}
+					<Button startIcon={<AddCircleIcon />} onClick={addCure}>
+						Add cure
+					</Button>
+					{cures.length !== 0 && (
+						<Button startIcon={<RemoveCircleIcon />} onClick={removeCure}>
+							Remove cure
+						</Button>
+					)}
+
+					<TextField
+						multiline
+						margin="dense"
+						id="final"
+						label="Final Diagnosis"
+						fullWidth
+						onChange={onFinalDiagnosisChange}
+						value={finalDiagnosis}
+						helperText="Warning: Cannot edit diagnosis after writing final diagnosis"
 					/>
 				</DialogContent>
 				<DialogActions>
@@ -233,33 +474,109 @@ export default function Diagnoses() {
 				</DialogActions>
 			</Dialog>
 
+			{/* OPEN DIAGNOSIS DIALOG */}
 			<Dialog
 				open={open}
 				onClose={!editing && handleClose}
 				aria-labelledby="alert-dialog-title"
 				aria-describedby="alert-dialog-description"
 				fullWidth
-				fullScreen
+				scroll="paper"
 			>
 				<DialogTitle id="alert-dialog-title">Diagnosis</DialogTitle>
 				<DialogContent>
 					{editing ? (
-						<TextField
-							autoFocus
-							fullWidth
-							multiline
-							id="edit"
-							margin="dense"
-							label="Text *"
-							value={editText}
-							onChange={onEditTextChange}
-							error={editTextError}
-							helperText={editTextError}
-						/>
+						<>
+							<DialogContentText>Complains</DialogContentText>
+							<p>{splitText(openedDiagnosis.complains)}</p> <hr />
+							<DialogContentText>Anamnesis</DialogContentText>
+							<p>{splitText(openedDiagnosis.anamnesis)}</p> <hr />
+							<DialogContentText>Objective status</DialogContentText>
+							<p>{splitText(openedDiagnosis.objectiveStatus)}</p> <hr />
+							<DialogContentText>Diagnosis</DialogContentText>
+							<TextField
+								autoFocus
+								fullWidth
+								multiline
+								id="diagnosisEdit"
+								margin="dense"
+								label="Edit diagnosis"
+								value={editDiagnosis}
+								onChange={onEditDiagnosisChange}
+								error={!!editDiagnosisError}
+								helperText={editDiagnosisError}
+							/>
+							<DialogContentText>Research plan</DialogContentText>
+							<p>{splitText(openedDiagnosis.researchPlan)}</p>
+							<DialogContentText>Cures</DialogContentText>
+							<ul>
+								{openedDiagnosis.cures &&
+									openedDiagnosis.cures.map((cure) => (
+										<li>{splitText(cure)}</li>
+									))}
+								{editCures.map((cure, index) => (
+									<TextField
+										key={index}
+										multiline
+										margin="dense"
+										id="cureEdit"
+										label={`New cure / recommendation ${index + 1}`}
+										fullWidth
+										onChange={(e) => onEditCureChange(e, index)}
+										value={cure}
+									/>
+								))}
+								<Button startIcon={<AddCircleIcon />} onClick={addEditCure}>
+									Add cure
+								</Button>
+								{editCures.length !== 0 && (
+									<Button
+										startIcon={<RemoveCircleIcon />}
+										onClick={removeEditCure}
+									>
+										Remove cure
+									</Button>
+								)}
+							</ul>
+							<DialogContentText>Final Diagnosis</DialogContentText>
+							<TextField
+								multiline
+								margin="dense"
+								id="finalEdit"
+								label="Final Diagnosis"
+								fullWidth
+								onChange={onEditFinalDiagnosisChange}
+								value={editFinalDiagnosis}
+								helperText="Warning: Cannot edit diagnosis after writing final diagnosis"
+							/>
+						</>
 					) : (
-						<DialogContentText id="alert-dialog-description">
-							{splitText(openedDiagnosis.details)}
-						</DialogContentText>
+						<>
+							<DialogContentText>Complains</DialogContentText>
+							<p>{splitText(openedDiagnosis.complains)}</p> <hr />
+							<DialogContentText>Anamnesis</DialogContentText>
+							<p>{splitText(openedDiagnosis.anamnesis)}</p> <hr />
+							<DialogContentText>Objective status</DialogContentText>
+							<p>{splitText(openedDiagnosis.objectiveStatus)}</p> <hr />
+							<DialogContentText>Diagnosis</DialogContentText>
+							<p>{splitText(openedDiagnosis.diagnosis)}</p> <hr />
+							<DialogContentText>Research plan</DialogContentText>
+							<p>{splitText(openedDiagnosis.researchPlan)}</p> <hr />
+							<DialogContentText>Cures</DialogContentText>
+							<ul>
+								{openedDiagnosis.cures &&
+									openedDiagnosis.cures.map((cure) => (
+										<li>{splitText(cure)}</li>
+									))}
+							</ul>
+							{openedDiagnosis.isFinished && (
+								<>
+									<hr />
+									<DialogContentText>Final Diagnosis</DialogContentText>
+									<p>{splitText(openedDiagnosis.finalDiagnosis)}</p>
+								</>
+							)}
+						</>
 					)}
 				</DialogContent>
 				<DialogActions>
@@ -274,7 +591,7 @@ export default function Diagnoses() {
 								</Button>
 							</>
 						) : (
-							<Button onClick={editDiagnosis}>Edit diagnosis</Button>
+							<Button onClick={updateDiagnosis}>Edit diagnosis</Button>
 						))}
 					<Button onClick={handleClose} autoFocus>
 						{editing ? "Cancel" : "Close"}

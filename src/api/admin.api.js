@@ -22,13 +22,12 @@ class adminAPI {
 		});
 	}
 
-	register(name, surname, profession, email, password) {
+	register(name, surname, profession, email) {
 		return API.post("/admins/registerDoctor", {
 			name,
 			surname,
 			profession,
 			email,
-			password,
 		}).catch((e) => {
 			return e.response.status;
 		});
@@ -48,8 +47,15 @@ class adminAPI {
 		});
 	}
 
-	deleteDoctor(doctor) {
-		return API.delete("/admins/doctor", { data: { doctor } }).catch((e) => {
+	getDoctorImage(id) {
+		return API.get("/admins/getDoctorImage/" + id).catch((e) => {
+			console.log("error: ", e.response);
+			return e.response.status;
+		});
+	}
+
+	deleteDoctor(id) {
+		return API.delete("/admins/doctor/" + id).catch((e) => {
 			console.log("error: ", e.response);
 			return e.response.status;
 		});

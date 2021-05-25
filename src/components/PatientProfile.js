@@ -14,7 +14,7 @@ import {
 	KeyboardDatePicker,
 } from "@material-ui/pickers";
 import IconButton from "@material-ui/core/IconButton";
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import patientAPI from "../api/patient.api";
 import Diagnoses from "./Diagnoses";
 import { makeStyles } from "@material-ui/core";
@@ -204,7 +204,7 @@ export default function PatientProfile() {
 			<div>
 				<h1>
 					<IconButton onClick={back}>
-						<ArrowBackIosIcon />
+						<ArrowBackIcon />
 					</IconButton>
 					{patient.name} {patient.surname} {patient.fatherName}
 				</h1>
