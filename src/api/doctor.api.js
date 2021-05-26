@@ -24,8 +24,8 @@ class doctorAPI {
 		});
 	}
 
-	update(phone, address) {
-		return API.patch("/doctors", { phone, address }).catch((e) => {
+	update(email, phone, address) {
+		return API.patch("/doctors", { email, phone, address }).catch((e) => {
 			console.log(e.response);
 		});
 	}

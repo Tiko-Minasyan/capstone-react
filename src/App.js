@@ -18,6 +18,8 @@ import PatientProfile from "./components/PatientProfile";
 import AdminLoginPage from "./components/admin/AdminLoginPage";
 import AdminPage from "./components/admin/AdminPage";
 import AdminRegisterPage from "./components/admin/AdminRegisterPage";
+import AdminRegisterAdminPage from "./components/admin/AdminRegisterAdminPage";
+import AdminEditPage from "./components/admin/AdminEditPage";
 import AdminDoctorsPage from "./components/admin/AdminDoctorsPage";
 import AdminDoctorProfile from "./components/admin/AdminDoctorProfile";
 import AdminHeader from "./components/admin/AdminHeader";
@@ -66,6 +68,14 @@ function App() {
 				<Route path="/admin/register">
 					<AdminHeader />
 					<AdminRegisterPage />
+				</Route>
+				<Route path="/admin/registerAdmin">
+					<AdminHeader />
+					<AdminRegisterAdminPage />
+				</Route>
+				<Route path="/admin/edit">
+					<AdminHeader />
+					<AdminEditPage />
 				</Route>
 				<Route path="/admin/viewDoctors" exact>
 					<AdminHeader />

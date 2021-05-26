@@ -33,6 +33,27 @@ class adminAPI {
 		});
 	}
 
+	registerAdmin(name, surname, position, email) {
+		return API.post("/admins/register", {
+			name,
+			surname,
+			position,
+			email,
+		}).catch((e) => {
+			return e.response.status;
+		});
+	}
+
+	update(email, password, oldPassword) {
+		return API.patch("/admins", {
+			email,
+			password,
+			oldPassword,
+		}).catch((e) => {
+			return e.response.status;
+		});
+	}
+
 	getDoctors(skip) {
 		return API.get(`/admins/getDoctors?skip=${skip}`).catch((e) => {
 			console.log("error: ", e.response);

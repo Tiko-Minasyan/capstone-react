@@ -72,9 +72,19 @@ export default function Header() {
 		history.push("/admin/register");
 	};
 
+	const newAdmin = () => {
+		handleCloseLinks();
+		history.push("/admin/registerAdmin");
+	};
+
 	const profile = () => {
 		handleClose();
 		history.push("/admin/profile");
+	};
+
+	const edit = () => {
+		handleClose();
+		history.push("/admin/edit");
 	};
 
 	const logout = () => {
@@ -113,6 +123,7 @@ export default function Header() {
 					>
 						<MenuItem onClick={allDoctors}>See All Doctors</MenuItem>
 						<MenuItem onClick={newDoctor}>Add a New Doctor</MenuItem>
+						<MenuItem onClick={newAdmin}>Add a New Admin</MenuItem>
 					</Menu>
 					<Typography variant="h6" className={classes.title}>
 						<span className={classes.pointer} onClick={profile}>
@@ -122,7 +133,7 @@ export default function Header() {
 					</Typography>
 					<div>
 						<span className={classes.name}>
-							{admin.name} {admin.surname}
+							{admin.name} {admin.surname}, {admin.position}
 						</span>
 						<IconButton
 							aria-label="account of current user"
@@ -149,6 +160,7 @@ export default function Header() {
 							onClose={handleClose}
 						>
 							<MenuItem onClick={profile}>Profile</MenuItem>
+							<MenuItem onClick={edit}>Edit account</MenuItem>
 							<MenuItem onClick={logout}>Logout</MenuItem>
 						</Menu>
 					</div>

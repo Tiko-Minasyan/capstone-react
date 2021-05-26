@@ -28,6 +28,13 @@ import SearchIcon from "@material-ui/icons/Search";
 import { TablePagination } from "@material-ui/core";
 
 const useStyles = makeStyles({
+	background: {
+		background: "#6f7fdc",
+		position: "absolute",
+		width: "100%",
+		height: "100vh",
+		zIndex: "-1",
+	},
 	table: {
 		minWidth: 650,
 	},
@@ -36,8 +43,17 @@ const useStyles = makeStyles({
 	},
 	flex: {
 		display: "flex",
-		justifyContent: "space-between",
-		padding: "0 10px",
+		justifyContent: "flex-end",
+		padding: "10px 10px",
+		alignItems: "center",
+	},
+	title: {
+		background: "#e0e0e0",
+		width: "200px",
+		borderRadius: "5px",
+		height: "80%",
+		display: "flex",
+		justifyContent: "center",
 		alignItems: "center",
 	},
 	searchDiv: {
@@ -49,10 +65,25 @@ const useStyles = makeStyles({
 	search: {
 		width: "400px",
 		margin: "5px",
+		background: "#e0e0e0",
+		borderRadius: "3px",
 	},
 	searchBtn: {
 		height: "55px",
 		marginTop: "5px",
+	},
+	header: {
+		fontWeight: "bold",
+		fontSize: "15px",
+	},
+	row: {
+		cursor: "pointer",
+		"&:nth-of-type(odd)": {
+			background: "lightgray",
+		},
+		"&:hover": {
+			background: "gray !important",
+		},
 	},
 });
 
@@ -319,6 +350,7 @@ export default function BasicTable() {
 
 	return (
 		<div>
+			<div className={classes.background}></div>
 			<div className={classes.searchDiv}>
 				<div>
 					<TextField
@@ -335,6 +367,9 @@ export default function BasicTable() {
 					>
 						<SearchIcon />
 					</Button>
+				</div>
+				<div className={classes.title}>
+					<h2>Patients Page</h2>
 				</div>
 				<div>
 					<TextField
@@ -354,24 +389,27 @@ export default function BasicTable() {
 				</div>
 			</div>
 			<div className={classes.flex}>
-				<h2>Patients Page</h2>
 				<Button
 					startIcon={<AddCircleIcon />}
 					onClick={handleClickOpen}
-					variant="outlined"
+					variant="contained"
 				>
 					Add new patient
 				</Button>
 			</div>
-			<Paper>
+			<Paper elevation={5}>
 				<TableContainer component={Paper}>
 					<Table className={classes.table} aria-label="simple table">
 						<TableHead>
 							<TableRow>
-								<TableCell>Patient Name</TableCell>
-								<TableCell>Patient Surname</TableCell>
-								<TableCell>Patient Father Name</TableCell>
-								<TableCell>Patient Age</TableCell>
+								<TableCell className={classes.header}>Patient Name</TableCell>
+								<TableCell className={classes.header}>
+									Patient Surname
+								</TableCell>
+								<TableCell className={classes.header}>
+									Patient Father Name
+								</TableCell>
+								<TableCell className={classes.header}>Patient Age</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -380,6 +418,7 @@ export default function BasicTable() {
 									key={patient._id}
 									hover
 									onClick={() => openPatient(patient._id)}
+									className={classes.row}
 								>
 									<TableCell component="th" scope="row">
 										{patient.name}
@@ -416,7 +455,7 @@ export default function BasicTable() {
 						autoFocus
 						margin="dense"
 						id="name"
-						label="Name *"
+						label="Name"
 						fullWidth
 						onChange={onNameChange}
 						value={name}
@@ -426,7 +465,7 @@ export default function BasicTable() {
 					<TextField
 						margin="dense"
 						id="surname"
-						label="Surname *"
+						label="Surname"
 						fullWidth
 						onChange={onSurnameChange}
 						value={surname}
@@ -450,7 +489,7 @@ export default function BasicTable() {
 							format="dd/MM/yyyy"
 							margin="normal"
 							id="birthday"
-							label="Patient birthday date (dd/mm/yyyy) *"
+							label="Patient birthday date (dd/mm/yyyy)"
 							value={selectedDate}
 							onChange={handleDateChange}
 							KeyboardButtonProps={{
@@ -461,24 +500,6 @@ export default function BasicTable() {
 							fullWidth
 						/>
 					</MuiPickersUtilsProvider>
-					<TextField
-						margin="dense"
-						id="phone"
-						label="Phone number"
-						fullWidth
-						onChange={onPhoneChange}
-						value={phone}
-					/>
-					<TextField
-						margin="dense"
-						id="address"
-						label="Address"
-						fullWidth
-						onChange={onAddressChange}
-						value={address}
-						error={!!addressError}
-						helperText={addressError}
-					/>
 					<TextField
 						margin="dense"
 						id="passport"
@@ -498,6 +519,24 @@ export default function BasicTable() {
 						value={SSID}
 						error={!!SSIDError}
 						helperText={SSIDError}
+					/>
+					<TextField
+						margin="dense"
+						id="address"
+						label="Address"
+						fullWidth
+						onChange={onAddressChange}
+						value={address}
+						error={!!addressError}
+						helperText={addressError}
+					/>
+					<TextField
+						margin="dense"
+						id="phone"
+						label="Phone number (optional)"
+						fullWidth
+						onChange={onPhoneChange}
+						value={phone}
 					/>
 				</DialogContent>
 				<DialogActions>

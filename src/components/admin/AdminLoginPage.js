@@ -13,11 +13,21 @@ import { Grid } from "@material-ui/core";
 import adminAPI from "../../api/admin.api";
 
 const useStyles = makeStyles((theme) => ({
+	background: {
+		background: "#3f51b5",
+		width: "100%",
+		height: "100vh",
+		position: "absolute",
+		display: "flex",
+		alignItems: "center",
+	},
 	container: {
-		background: "lightgray",
+		background: "white",
+		height: "420px",
+		borderRadius: "20px",
 	},
 	paper: {
-		marginTop: theme.spacing(8),
+		marginTop: theme.spacing(3),
 		display: "flex",
 		flexDirection: "column",
 		alignItems: "center",
@@ -94,63 +104,65 @@ export default function AdminSignIn() {
 	};
 
 	return (
-		<Container component="main" maxWidth="xs" className={classes.container}>
-			<CssBaseline />
-			<div className={classes.paper}>
-				<Avatar className={classes.avatar}>
-					<LockOutlinedIcon />
-				</Avatar>
-				<Typography component="h1" variant="h5">
-					Sign in
-				</Typography>
-				<form className={classes.form} noValidate onSubmit={formSubmit}>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						fullWidth
-						id="email"
-						label="Email Address"
-						name="email"
-						autoComplete="email"
-						autoFocus
-						value={email}
-						onChange={onEmailChange}
-						error={!!emailError}
-						helperText={emailError}
-					/>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						fullWidth
-						name="password"
-						label="Password"
-						type="password"
-						id="password"
-						autoComplete="current-password"
-						value={password}
-						onChange={onPasswordChange}
-						error={!!passwordError}
-						helperText={passwordError}
-					/>
-					<Button
-						type="submit"
-						fullWidth
-						variant="contained"
-						color="primary"
-						className={classes.submit}
-					>
-						Sign In
-					</Button>
-					<Grid container justify="flex-end">
-						<Grid item>
-							Not an admin?{" "}
-							<Link to="/" variant="body2">
-								Back to user login
-							</Link>
+		<div className={classes.background}>
+			<Container component="main" maxWidth="xs" className={classes.container}>
+				<CssBaseline />
+				<div className={classes.paper}>
+					<Avatar className={classes.avatar}>
+						<LockOutlinedIcon />
+					</Avatar>
+					<Typography component="h1" variant="h5">
+						Sign in
+					</Typography>
+					<form className={classes.form} noValidate onSubmit={formSubmit}>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							fullWidth
+							id="email"
+							label="Email Address"
+							name="email"
+							autoComplete="email"
+							autoFocus
+							value={email}
+							onChange={onEmailChange}
+							error={!!emailError}
+							helperText={emailError}
+						/>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							fullWidth
+							name="password"
+							label="Password"
+							type="password"
+							id="password"
+							autoComplete="current-password"
+							value={password}
+							onChange={onPasswordChange}
+							error={!!passwordError}
+							helperText={passwordError}
+						/>
+						<Button
+							type="submit"
+							fullWidth
+							variant="contained"
+							color="primary"
+							className={classes.submit}
+						>
+							Sign In As Admin
+						</Button>
+						<Grid container justify="flex-end">
+							<Grid item>
+								Not an admin?{" "}
+								<Link to="/" variant="body2">
+									Back to user login
+								</Link>
+							</Grid>
 						</Grid>
-					</Grid>
-				</form>
-			</div>
-		</Container>
+					</form>
+				</div>
+			</Container>
+		</div>
 	);
 }

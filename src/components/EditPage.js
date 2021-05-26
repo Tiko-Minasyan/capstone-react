@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
+import { isEmail } from "validator";
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -28,8 +29,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function EditPage() {
+	const [email, setEmail] = React.useState("");
 	const [phone, setPhone] = React.useState("");
 	const [address, setAddress] = React.useState("");
+	const [emailError, setEmailError] = React.useState("");
 
 	const classes = useStyles();
 	const history = useHistory();
@@ -38,10 +41,16 @@ export default function EditPage() {
 		doctorAPI.getProfile().then((res) => {
 			if (typeof res === "number") return history.push("/profile");
 
+			setEmail(res.data.email);
 			setPhone(res.data.phone);
 			setAddress(res.data.address);
 		});
 	}, [history]);
+
+	const onEmailChange = (e) => {
+		setEmail(e.target.value);
+		setEmailError("");
+	};
 
 	const onPhoneChange = (e) => {
 		setPhone(e.target.value);
@@ -53,10 +62,15 @@ export default function EditPage() {
 
 	const formSubmit = (e) => {
 		e.preventDefault();
-
-		doctorAPI.update(phone, address).then(() => {
-			history.push("/profile");
-		});
+		if (!email) {
+			setEmailError("Email cannot be empty!");
+		} else if (!isEmail(email)) {
+			setEmailError("Wrong email format!");
+		} else {
+			doctorAPI.update(email, phone, address).then(() => {
+				history.push("/profile");
+			});
+		}
 	};
 
 	return (
@@ -66,6 +80,18 @@ export default function EditPage() {
 					Edit Account
 				</Typography>
 				<form className={classes.form} noValidate onSubmit={formSubmit}>
+					<TextField
+						variant="outlined"
+						margin="normal"
+						fullWidth
+						name="email"
+						label="Email address"
+						id="email"
+						value={email}
+						onChange={onEmailChange}
+						error={!!emailError}
+						helperText={emailError}
+					/>
 					<TextField
 						variant="outlined"
 						margin="normal"
