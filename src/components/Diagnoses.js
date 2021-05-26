@@ -67,11 +67,7 @@ export default function Diagnoses() {
 	const [researchPlanError, setResearchPlanError] = React.useState("");
 	const [curesError, setCuresError] = React.useState("");
 
-	// const [editComplains, setEditComplains] = React.useState("");
-	// const [editAnamnesis, setEditAnamnesis] = React.useState("");
-	// const [editObjectiveStatus, setEditObjectiveStatus] = React.useState("");
 	const [editDiagnosis, setEditDiagnosis] = React.useState("");
-	// const [editResearchPlan, setEditResearchPlan] = React.useState("");
 	const [editCures, setEditCures] = React.useState([]);
 	const [editFinalDiagnosis, setEditFinalDiagnosis] = React.useState("");
 	const [editDiagnosisError, setEditDiagnosisError] = React.useState("");
@@ -93,7 +89,7 @@ export default function Diagnoses() {
 		setOpenedDiagnosis(diagnoses[index]);
 		setOwnDiagnosis(id === doctorId && !isFinished);
 
-		setEditDiagnosis(diagnoses[index].diagnosis);
+		setEditDiagnosis("");
 		setEditCures([]);
 	};
 
@@ -190,8 +186,6 @@ export default function Diagnoses() {
 	const addDiagnosis = () => {
 		let error = false;
 
-		console.log(cures.length);
-
 		if (!complains) {
 			setComplainsError("Complains are missing!");
 			error = true;
@@ -277,18 +271,18 @@ export default function Diagnoses() {
 	};
 
 	const saveChanges = () => {
-		let error = false;
-
-		if (!editDiagnosis) {
-			setEditDiagnosisError("Diagnosis is missing!");
-			error = true;
-		}
-
-		if (!error) {
+		if (
+			!editDiagnosis &&
+			!editFinalDiagnosis &&
+			(editCures.length === 0 ||
+				(editCures.length === 1 && editCures[0] === ""))
+		) {
+			handleClose();
+		} else {
 			if (editCures[editCures.length - 1] === "") editCures.pop();
 
 			const data = {
-				diagnosis: editDiagnosis,
+				diagnosis: openedDiagnosis.diagnosis + "\n" + editDiagnosis,
 				cures: [...openedDiagnosis.cures, ...editCures],
 				finalDiagnosis: editFinalDiagnosis,
 			};
@@ -497,13 +491,14 @@ export default function Diagnoses() {
 							<DialogContentText>Objective status</DialogContentText>
 							<p>{splitText(openedDiagnosis.objectiveStatus)}</p> <hr />
 							<DialogContentText>Diagnosis</DialogContentText>
+							<p>{splitText(openedDiagnosis.diagnosis)}</p>
 							<TextField
 								autoFocus
 								fullWidth
 								multiline
 								id="diagnosisEdit"
 								margin="dense"
-								label="Edit diagnosis"
+								label="Update diagnosis"
 								value={editDiagnosis}
 								onChange={onEditDiagnosisChange}
 								error={!!editDiagnosisError}

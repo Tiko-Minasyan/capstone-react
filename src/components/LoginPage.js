@@ -45,6 +45,7 @@ export default function SignIn() {
 				if (res === 409) return history.push("/admin/profile");
 				if (res === 403) return localStorage.removeItem("token");
 				if (res === 404) return localStorage.removeItem("token");
+
 				console.log("You are already logged in!");
 				history.push("/profile");
 			});

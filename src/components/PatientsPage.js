@@ -23,6 +23,9 @@ import {
 	KeyboardDatePicker,
 } from "@material-ui/pickers";
 import { useHistory } from "react-router";
+import validator from "validator";
+import SearchIcon from "@material-ui/icons/Search";
+import { TablePagination } from "@material-ui/core";
 
 const useStyles = makeStyles({
 	table: {
@@ -37,21 +40,47 @@ const useStyles = makeStyles({
 		padding: "0 10px",
 		alignItems: "center",
 	},
+	searchDiv: {
+		display: "flex",
+		justifyContent: "space-between",
+		height: "70px",
+		alignItems: "center",
+	},
+	search: {
+		width: "400px",
+		margin: "5px",
+	},
+	searchBtn: {
+		height: "55px",
+		marginTop: "5px",
+	},
 });
 
 export default function BasicTable() {
 	const [patients, setPatients] = React.useState([]);
 	const [open, setOpen] = React.useState(false);
 	const [selectedDate, setSelectedDate] = React.useState(new Date());
+	const [page, setPage] = React.useState(0);
+	const [count, setCount] = React.useState(0);
+	const [isSearching, setIsSearching] = React.useState(false);
 
 	const [name, setName] = React.useState("");
 	const [surname, setSurname] = React.useState("");
 	const [fatherName, setFatherName] = React.useState("");
 	const [phone, setPhone] = React.useState("");
 	const [address, setAddress] = React.useState("");
+	const [passportID, setPassportID] = React.useState("");
+	const [SSID, setSSID] = React.useState("");
 	const [nameError, setNameError] = React.useState("");
 	const [surnameError, setSurnameError] = React.useState("");
+	const [fatherNameError, setFatherNameError] = React.useState("");
 	const [birthdayError, setBirthdayError] = React.useState("");
+	const [addressError, setAddressError] = React.useState("");
+	const [passportIDError, setPassportIDError] = React.useState("");
+	const [SSIDError, setSSIDError] = React.useState("");
+
+	const [nameSearch, setNameSearch] = React.useState("");
+	const [idSearch, setIdSearch] = React.useState("");
 
 	const classes = useStyles();
 	const history = useHistory();
@@ -73,6 +102,11 @@ export default function BasicTable() {
 		setBirthdayError("");
 	};
 
+	const handleChangePage = (e, newPage) => {
+		setPage(newPage);
+		isSearching ? searchByName(newPage * 10) : getPatients(newPage * 10);
+	};
+
 	const onNameChange = (e) => {
 		setName(e.target.value);
 		setNameError("");
@@ -85,6 +119,7 @@ export default function BasicTable() {
 
 	const onFatherNameChange = (e) => {
 		setFatherName(e.target.value);
+		setFatherNameError("");
 	};
 
 	const onPhoneChange = (e) => {
@@ -93,19 +128,37 @@ export default function BasicTable() {
 
 	const onAddressChange = (e) => {
 		setAddress(e.target.value);
+		setAddressError("");
+	};
+
+	const onPassportIDChange = (e) => {
+		setPassportID(e.target.value);
+		setPassportIDError("");
+	};
+
+	const onSSIDChange = (e) => {
+		setSSID(e.target.value);
+		setSSIDError("");
+	};
+
+	const onNameSearchChange = (e) => {
+		setNameSearch(e.target.value);
+	};
+
+	const onIdSearchChange = (e) => {
+		setIdSearch(e.target.value);
 	};
 
 	useEffect(() => {
-		patientAPI.getPatients().then((res) => {
-			if (typeof res !== "number") {
-				res.data.forEach((patient) => {
-					if (patient.fatherName === "") patient.fatherName = "–";
-				});
-
-				setPatients(res.data);
-			}
-		});
+		getPatients(0);
 	}, []);
+
+	const getPatients = (skip) => {
+		patientAPI.getPatients(skip).then((res) => {
+			setPatients(res.data.patients);
+			setCount(res.data.count);
+		});
+	};
 
 	const openPatient = (id) => {
 		history.push("/patients/" + id);
@@ -144,6 +197,37 @@ export default function BasicTable() {
 		if (!surname) {
 			setSurnameError("Surname is missing!");
 			error = true;
+		}
+		if (!fatherName) {
+			setFatherNameError("Father name is missing!");
+			error = true;
+		}
+		if (!address) {
+			setAddressError("Address is missnig!");
+			error = true;
+		}
+		if (!passportID) {
+			setPassportIDError("Passport or ID card number is missing!");
+			error = true;
+		} else {
+			const isPassport = validator.isPassportNumber(passportID, "AM");
+			const isID =
+				validator.isNumeric(passportID, { no_symbols: true }) &&
+				passportID.length === 9;
+			if (!isPassport && !isID) {
+				setPassportIDError("Wrong passport or ID number format!");
+				error = true;
+			}
+		}
+		if (!SSID) {
+			setSSIDError("SSID is missing!");
+			error = true;
+		} else if (
+			!validator.isNumeric(SSID, { no_symbols: true }) ||
+			SSID.length !== 10
+		) {
+			setSSIDError("Wrong SSID format!");
+			error = true;
 		} // eslint-disable-next-line
 		if (selectedDate === null || selectedDate == "Invalid Date") {
 			setBirthdayError("Invalid date!");
@@ -175,36 +259,100 @@ export default function BasicTable() {
 
 		if (!error) {
 			const birthday = month + "/" + day + "/" + year + " 4:00:00";
-			patientAPI
-				.addPatient(name, surname, fatherName, birthday, phone, address)
-				.then((res) => {
-					const newPatients = [
-						...patients,
-						{
-							_id: res.data,
-							name,
-							surname,
-							fatherName: fatherName !== "" ? fatherName : "–",
-							birthday: year + "-" + month + "-" + day + "T",
-							phone,
-							address,
-						},
-					];
-
-					setPatients(newPatients);
-					setOpen(false);
-					setName("");
-					setSurname("");
-					setFatherName("");
-					setSelectedDate(new Date());
-					setPhone("");
-					setAddress("");
-				});
+			const data = {
+				name,
+				surname,
+				fatherName,
+				birthday,
+				phone,
+				address,
+				passportID,
+				SSID,
+			};
+			patientAPI.addPatient(data).then(() => {
+				setOpen(false);
+				setName("");
+				setSurname("");
+				setFatherName("");
+				setSelectedDate(new Date());
+				setPhone("");
+				setAddress("");
+				setPassportID("");
+				setSSID("");
+				getPatients(0);
+				setPage(0);
+			});
 		}
+	};
+
+	const searchByName = (skip) => {
+		if (!nameSearch) {
+			setIsSearching(false);
+			setPage(0);
+			return getPatients();
+		}
+
+		if (!isSearching) {
+			setIsSearching(true);
+			setPage(0);
+		}
+
+		patientAPI.searchByName(nameSearch, skip).then((res) => {
+			setPatients(res.data.patients);
+			setCount(res.data.count);
+		});
+	};
+
+	const searchById = () => {
+		if (!idSearch) {
+			setIsSearching(false);
+			setPage(0);
+			return getPatients();
+		}
+
+		patientAPI.searchById(idSearch).then((res) => {
+			setPatients(res.data.patients);
+			setCount(res.data.count);
+			setPage(0);
+		});
 	};
 
 	return (
 		<div>
+			<div className={classes.searchDiv}>
+				<div>
+					<TextField
+						variant="filled"
+						label="Search by name, surname, father name"
+						className={classes.search}
+						value={nameSearch}
+						onChange={onNameSearchChange}
+					/>
+					<Button
+						variant="contained"
+						className={classes.searchBtn}
+						onClick={() => searchByName(0)}
+					>
+						<SearchIcon />
+					</Button>
+				</div>
+				<div>
+					<TextField
+						variant="filled"
+						label="Search by passport or ID card number or SSID"
+						className={classes.search}
+						value={idSearch}
+						onChange={onIdSearchChange}
+					/>
+					<Button
+						variant="contained"
+						className={classes.searchBtn}
+						onClick={searchById}
+					>
+						<SearchIcon />
+					</Button>
+				</div>
+			</div>
 			<div className={classes.flex}>
 				<h2>Patients Page</h2>
 				<Button
@@ -215,34 +363,44 @@ export default function BasicTable() {
 					Add new patient
 				</Button>
 			</div>
-			<TableContainer component={Paper}>
-				<Table className={classes.table} aria-label="simple table">
-					<TableHead>
-						<TableRow>
-							<TableCell>Patient Name</TableCell>
-							<TableCell>Patient Surname</TableCell>
-							<TableCell>Patient Father Name</TableCell>
-							<TableCell>Patient Age</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{patients.map((patient) => (
-							<TableRow
-								key={patient._id}
-								hover
-								onClick={() => openPatient(patient._id)}
-							>
-								<TableCell component="th" scope="row">
-									{patient.name}
-								</TableCell>
-								<TableCell>{patient.surname}</TableCell>
-								<TableCell>{patient.fatherName}</TableCell>
-								<TableCell>{getAge(patient.birthday)}</TableCell>
+			<Paper>
+				<TableContainer component={Paper}>
+					<Table className={classes.table} aria-label="simple table">
+						<TableHead>
+							<TableRow>
+								<TableCell>Patient Name</TableCell>
+								<TableCell>Patient Surname</TableCell>
+								<TableCell>Patient Father Name</TableCell>
+								<TableCell>Patient Age</TableCell>
 							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
+						</TableHead>
+						<TableBody>
+							{patients.map((patient) => (
+								<TableRow
+									key={patient._id}
+									hover
+									onClick={() => openPatient(patient._id)}
+								>
+									<TableCell component="th" scope="row">
+										{patient.name}
+									</TableCell>
+									<TableCell>{patient.surname}</TableCell>
+									<TableCell>{patient.fatherName}</TableCell>
+									<TableCell>{getAge(patient.birthday)}</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</TableContainer>
+				<TablePagination
+					component="div"
+					rowsPerPageOptions={[10]}
+					onChangePage={handleChangePage}
+					count={count}
+					page={page}
+					rowsPerPage={10}
+				/>
+			</Paper>
 
 			<Dialog
 				open={open}
@@ -282,6 +440,8 @@ export default function BasicTable() {
 						fullWidth
 						onChange={onFatherNameChange}
 						value={fatherName}
+						error={!!fatherNameError}
+						helperText={fatherNameError}
 					/>
 					<MuiPickersUtilsProvider utils={DateFnsUtils}>
 						<KeyboardDatePicker
@@ -316,6 +476,28 @@ export default function BasicTable() {
 						fullWidth
 						onChange={onAddressChange}
 						value={address}
+						error={!!addressError}
+						helperText={addressError}
+					/>
+					<TextField
+						margin="dense"
+						id="passport"
+						label="Passport ot ID card number"
+						fullWidth
+						onChange={onPassportIDChange}
+						value={passportID}
+						error={!!passportIDError}
+						helperText={passportIDError}
+					/>
+					<TextField
+						margin="dense"
+						id="ssid"
+						label="SSID"
+						fullWidth
+						onChange={onSSIDChange}
+						value={SSID}
+						error={!!SSIDError}
+						helperText={SSIDError}
 					/>
 				</DialogContent>
 				<DialogActions>

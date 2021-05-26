@@ -147,7 +147,7 @@ export default function Header() {
 							onClose={handleClose}
 						>
 							<MenuItem onClick={profile}>Profile</MenuItem>
-							<MenuItem onClick={edit}>Edit</MenuItem>
+							<MenuItem onClick={edit}>Edit account</MenuItem>
 							<MenuItem onClick={logout}>Logout</MenuItem>
 						</Menu>
 					</div>

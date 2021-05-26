@@ -11,11 +11,12 @@ export const setAuthToken = (token = localStorage.getItem("token")) => {
 };
 
 API.interceptors.response.use(
-	(res) => {
-		// console.log("RES:", res);
-		return res;
-	},
+	(res) => res,
 	(e) => {
+		if (e.response.status === 401) {
+			localStorage.removeItem("token");
+			window.location.href = "/";
+		}
 		return Promise.reject(e);
 	}
 );

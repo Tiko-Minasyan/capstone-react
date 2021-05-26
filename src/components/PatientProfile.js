@@ -8,11 +8,6 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import "date-fns";
-import DateFnsUtils from "@date-io/date-fns";
-import {
-	MuiPickersUtilsProvider,
-	KeyboardDatePicker,
-} from "@material-ui/pickers";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import patientAPI from "../api/patient.api";
@@ -36,10 +31,7 @@ export default function PatientProfile() {
 	const [birthday, setBirthday] = React.useState("");
 
 	const [update, setUpdate] = React.useState({});
-	const [selectedDate, setSelectedDate] = React.useState("");
-	const [nameError, setNameError] = React.useState("");
-	const [surnameError, setSurnameError] = React.useState("");
-	const [birthdayError, setBirthdayError] = React.useState("");
+	const [addressError, setAddressError] = React.useState("");
 	const [openEdit, setOpenEdit] = React.useState(false);
 	const [openDelete, setOpenDelete] = React.useState(false);
 
@@ -63,31 +55,13 @@ export default function PatientProfile() {
 		setOpenDelete(false);
 	};
 
-	const handleDateChange = (date) => {
-		setSelectedDate(date);
-		setBirthdayError("");
-	};
-
-	const onNameChange = (e) => {
-		setUpdate({ ...update, name: e.target.value });
-		setNameError("");
-	};
-
-	const onSurnameChange = (e) => {
-		setUpdate({ ...update, surname: e.target.value });
-		setSurnameError("");
-	};
-
-	const onFatherNameChange = (e) => {
-		setUpdate({ ...update, fatherName: e.target.value });
-	};
-
 	const onPhoneChange = (e) => {
 		setUpdate({ ...update, phone: e.target.value });
 	};
 
 	const onAddressChange = (e) => {
 		setUpdate({ ...update, address: e.target.value });
+		setAddressError("");
 	};
 
 	useEffect(() => {
@@ -99,7 +73,6 @@ export default function PatientProfile() {
 
 			const date = res.data.birthday.split("T")[0].split("-");
 			setBirthday(date[2] + "/" + date[1] + "/" + date[0]);
-			setSelectedDate(date[1] + "/" + date[2] + "/" + date[0]);
 		});
 	}, [history, id]);
 
@@ -127,65 +100,13 @@ export default function PatientProfile() {
 	};
 
 	const editPatient = () => {
-		let error = false;
-
-		if (!update.name) {
-			setNameError("Name is missing!");
-			error = true;
-		}
-		if (!update.surname) {
-			setSurnameError("Surname is missing!");
-			error = true;
-		} // eslint-disable-next-line
-		if (selectedDate === null || selectedDate == "Invalid Date") {
-			setBirthdayError("Invalid date!");
-			error = true;
-		}
-
-		const date = new Date(selectedDate);
-		let day = date.getDate();
-		let month = date.getMonth() + 1;
-		const year = date.getFullYear();
-
-		const currentDate = new Date();
-		const currentDay = currentDate.getDate();
-		const currentMonth = currentDate.getMonth() + 1;
-		const currentYear = currentDate.getFullYear();
-
-		if (currentYear < year) {
-			setBirthdayError("Invalid date!");
-			error = true;
-		} else if (currentYear === year) {
-			if (currentMonth < month) {
-				setBirthdayError("Invalid date!");
-				error = true;
-			} else if (currentMonth === month && currentDay < day) {
-				setBirthdayError("Invalid date!");
-				error = true;
-			}
-		}
-
-		if (!error) {
-			if (day < 10) day = "0" + day;
-			if (month < 10) month = "0" + month;
-			const birthday = month + "/" + day + "/" + year + " 4:00:00";
-
-			patientAPI
-				.editPatient(
-					id,
-					update.name,
-					update.surname,
-					update.fatherName,
-					birthday,
-					update.phone,
-					update.address
-				)
-				.then(() => {
-					setPatient(update);
-					const date = birthday.split(" ")[0].split("/");
-					setBirthday(date[1] + "/" + date[0] + "/" + date[2]);
-					setOpenEdit(false);
-				});
+		if (!update.address) {
+			setAddressError("Address cannot be empty!");
+		} else {
+			patientAPI.editPatient(id, update.phone, update.address).then(() => {
+				setPatient({ ...patient, ...update });
+				setOpenEdit(false);
+			});
 		}
 	};
 
@@ -232,7 +153,9 @@ export default function PatientProfile() {
 					</div>
 				</div>
 				<p>Phone number: {patient.phone ? patient.phone : "Not registered"}</p>
-				<p>Address: {patient.address ? patient.address : "Not registered"}</p>
+				<p>Address: {patient.address}</p>
+				<p>Passport / ID card number: {patient.passportID}</p>
+				<p>SSID: {patient.SSID}</p>
 				<Diagnoses />
 			</div>
 
@@ -242,55 +165,8 @@ export default function PatientProfile() {
 					onClose={handleEditClose}
 					aria-labelledby="form-dialog-title"
 				>
-					<DialogTitle id="form-dialog-title">Edit patient</DialogTitle>
+					<DialogTitle id="form-dialog-title">Edit patient info</DialogTitle>
 					<DialogContent>
-						<TextField
-							autoFocus
-							margin="dense"
-							id="name"
-							label="Name *"
-							fullWidth
-							onChange={onNameChange}
-							value={update.name}
-							error={!!nameError}
-							helperText={nameError}
-						/>
-						<TextField
-							margin="dense"
-							id="surname"
-							label="Surname *"
-							fullWidth
-							onChange={onSurnameChange}
-							value={update.surname}
-							error={!!surnameError}
-							helperText={surnameError}
-						/>
-						<TextField
-							margin="dense"
-							id="fatherName"
-							label="Father Name"
-							fullWidth
-							onChange={onFatherNameChange}
-							value={update.fatherName}
-						/>
-						<MuiPickersUtilsProvider utils={DateFnsUtils}>
-							<KeyboardDatePicker
-								disableToolbar
-								variant="inline"
-								format="dd/MM/yyyy"
-								margin="normal"
-								id="birthday"
-								label="Patient birthday date (dd/mm/yyyy) *"
-								value={selectedDate}
-								onChange={handleDateChange}
-								KeyboardButtonProps={{
-									"aria-label": "change date",
-								}}
-								error={!!birthdayError}
-								helperText={birthdayError}
-								fullWidth
-							/>
-						</MuiPickersUtilsProvider>
 						<TextField
 							margin="dense"
 							id="phone"
@@ -306,6 +182,8 @@ export default function PatientProfile() {
 							fullWidth
 							onChange={onAddressChange}
 							value={update.address}
+							error={!!addressError}
+							helperText={addressError}
 						/>
 					</DialogContent>
 					<DialogActions>

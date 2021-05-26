@@ -33,11 +33,18 @@ class adminAPI {
 		});
 	}
 
-	getDoctors() {
-		return API.get("/admins/getDoctors").catch((e) => {
+	getDoctors(skip) {
+		return API.get(`/admins/getDoctors?skip=${skip}`).catch((e) => {
 			console.log("error: ", e.response);
 			return e.response.status;
 		});
+	}
+
+	searchDoctors(name, profession, skip) {
+		return API.post(`/admins/getDoctors?skip=${skip}`, {
+			name,
+			profession,
+		}).catch((e) => console.log("error: ", e.response));
 	}
 
 	getDoctor(id) {

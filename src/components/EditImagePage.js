@@ -28,10 +28,10 @@ export default function EditImagePage() {
 	};
 
 	const a = (e) => {
-		console.log("SUBMITTED");
-		console.log(e.target.files[0]);
-		console.log(typeof e.target.files);
-		console.log(e.target.result);
+		// console.log("SUBMITTED");
+		// console.log(e.target.files[0]);
+		// console.log(typeof e.target.files);
+		// console.log(e.target.result);
 	};
 
 	return (

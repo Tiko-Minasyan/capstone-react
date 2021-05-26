@@ -28,12 +28,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function EditPage() {
-	const [name, setName] = React.useState("");
-	const [surname, setSurname] = React.useState("");
 	const [phone, setPhone] = React.useState("");
 	const [address, setAddress] = React.useState("");
-	const [nameError, setNameError] = React.useState("");
-	const [surnameError, setSurnameError] = React.useState("");
 
 	const classes = useStyles();
 	const history = useHistory();
@@ -42,22 +38,10 @@ export default function EditPage() {
 		doctorAPI.getProfile().then((res) => {
 			if (typeof res === "number") return history.push("/profile");
 
-			setName(res.data.name);
-			setSurname(res.data.surname);
 			setPhone(res.data.phone);
 			setAddress(res.data.address);
 		});
 	}, [history]);
-
-	const onNameChange = (e) => {
-		setName(e.target.value);
-		setNameError("");
-	};
-
-	const onSurnameChange = (e) => {
-		setSurname(e.target.value);
-		setSurnameError("");
-	};
 
 	const onPhoneChange = (e) => {
 		setPhone(e.target.value);
@@ -69,22 +53,10 @@ export default function EditPage() {
 
 	const formSubmit = (e) => {
 		e.preventDefault();
-		let error = false;
 
-		if (!name) {
-			setNameError("Name cannot be empty!");
-			error = true;
-		}
-		if (!surname) {
-			setSurnameError("Surname cannot be empty!");
-			error = true;
-		}
-
-		if (!error) {
-			doctorAPI.update(name, surname, phone, address).then(() => {
-				history.push("/profile");
-			});
-		}
+		doctorAPI.update(phone, address).then(() => {
+			history.push("/profile");
+		});
 	};
 
 	return (
@@ -94,35 +66,6 @@ export default function EditPage() {
 					Edit Account
 				</Typography>
 				<form className={classes.form} noValidate onSubmit={formSubmit}>
-					<Grid container spacing={2}>
-						<Grid item xs={12} sm={6}>
-							<TextField
-								name="name"
-								variant="outlined"
-								fullWidth
-								id="name"
-								label="Name"
-								autoFocus
-								value={name}
-								onChange={onNameChange}
-								error={!!nameError}
-								helperText={nameError}
-							/>
-						</Grid>
-						<Grid item xs={12} sm={6}>
-							<TextField
-								variant="outlined"
-								fullWidth
-								id="surname"
-								label="Surname"
-								name="surname"
-								value={surname}
-								onChange={onSurnameChange}
-								error={!!surnameError}
-								helperText={surnameError}
-							/>
-						</Grid>
-					</Grid>
 					<TextField
 						variant="outlined"
 						margin="normal"

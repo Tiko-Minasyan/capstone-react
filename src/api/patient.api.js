@@ -1,33 +1,33 @@
 import API from "../axios";
 
 class doctorAPI {
-	getPatients() {
-		return API.get("/patients").catch((e) => {
+	getPatients(skip) {
+		return API.get(`/patients?skip=${skip}`).catch((e) => {
+			console.log("error: ", e.response);
+		});
+	}
+
+	searchByName(name, skip) {
+		return API.post(`/patients/name?skip=${skip}`, { name }).catch((e) => {
+			console.log("error: ", e.response);
+		});
+	}
+
+	searchById(id) {
+		return API.post("/patients/id", { id }).catch((e) => {
+			console.log("error: ", e.response);
+		});
+	}
+
+	addPatient(data) {
+		return API.post("/patients", data).catch((e) => {
 			console.log("error: ", e.response);
 			return e.response.status;
 		});
 	}
 
-	addPatient(name, surname, fatherName, birthday, phone, address) {
-		return API.post("/patients", {
-			name,
-			surname,
-			fatherName,
-			birthday,
-			phone,
-			address,
-		}).catch((e) => {
-			console.log("error: ", e.response);
-			return e.response.status;
-		});
-	}
-
-	editPatient(id, name, surname, fatherName, birthday, phone, address) {
+	editPatient(id, phone, address) {
 		return API.patch("/patients/" + id, {
-			name,
-			surname,
-			fatherName,
-			birthday,
 			phone,
 			address,
 		}).catch((e) => {

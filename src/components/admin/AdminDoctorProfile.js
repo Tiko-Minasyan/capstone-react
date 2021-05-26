@@ -54,7 +54,7 @@ export default function AdminDoctorProfile() {
 		adminAPI.getDoctor(id).then((res) => {
 			if (res === 404) history.push("/admin/viewDoctors");
 
-			console.log(res);
+			// console.log(res);
 			setDoctor(res.data);
 		});
 	}, [history, id]);

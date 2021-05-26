@@ -18,19 +18,16 @@ class doctorAPI {
 
 	getProfile() {
 		return API.get("/doctors/profile").catch((e) => {
-			console.log(e.response);
-			if (e.response.status === 403) return 403;
+			if (!e.response) return 0;
 			if (e.response.status === 404) return 404;
 			if (e.response.status === 409) return 409;
 		});
 	}
 
-	update(name, surname, phone, address) {
-		return API.patch("/doctors", { name, surname, phone, address }).catch(
-			(e) => {
-				console.log(e.response);
-			}
-		);
+	update(phone, address) {
+		return API.patch("/doctors", { phone, address }).catch((e) => {
+			console.log(e.response);
+		});
 	}
 
 	updatePassword(oldPassword, password) {
