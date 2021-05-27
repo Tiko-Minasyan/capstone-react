@@ -46,7 +46,7 @@ export default function EditPage() {
 
 	useEffect(() => {
 		adminAPI.getProfile().then((res) => {
-			if (typeof res === "number") return history.push("/profile");
+			if (typeof res === "number") return history.push("/");
 
 			setEmail(res.data.email);
 		});
@@ -112,7 +112,7 @@ export default function EditPage() {
 			adminAPI.update(email, password, oldPassword).then((res) => {
 				if (res === 403) return setOldPasswordError("Incorrect password!");
 
-				history.push("/profile");
+				history.push("/admin/viewDoctors");
 			});
 		}
 	};

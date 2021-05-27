@@ -42,10 +42,12 @@ class doctorAPI {
 		});
 	}
 
-	deletePatient(id) {
-		return API.delete("/patients/" + id).catch((e) => {
-			console.log(e.response);
-		});
+	deletePatient(id, deleteReason) {
+		return API.delete("/patients/" + id, { data: { deleteReason } }).catch(
+			(e) => {
+				console.log(e.response);
+			}
+		);
 	}
 }
 

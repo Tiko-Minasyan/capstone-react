@@ -58,7 +58,7 @@ export default function AdminSignIn() {
 			adminAPI.getProfile().then((res) => {
 				if (res === 403) return;
 
-				history.push("/admin/profile");
+				history.push("/admin/viewDoctors");
 			});
 		} // eslint-disable-next-line
 	}, []);
@@ -98,7 +98,7 @@ export default function AdminSignIn() {
 				if (res === 403) return setPasswordError("Wrong password!");
 
 				localStorage.setItem("token", res);
-				history.push("/admin/profile");
+				history.push("/admin/viewDoctors");
 			});
 		}
 	};

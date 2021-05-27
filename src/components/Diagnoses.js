@@ -254,6 +254,8 @@ export default function Diagnoses() {
 				res.data.diagnoses.forEach((item) => {
 					item.createdAt = timeFormat(item.createdAt);
 					item.updatedAt = timeFormat(item.updatedAt);
+
+					if (item.doctor === null) item.doctor = { ...item.archivedDoctor };
 				});
 
 				setDiagnoses(res.data.diagnoses);

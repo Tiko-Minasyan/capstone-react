@@ -38,6 +38,16 @@ class doctorAPI {
 			}
 		);
 	}
+
+	updatePicture(data) {
+		return API.post("/doctors/picture", data, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		}).catch((e) => {
+			console.log(e);
+		});
+	}
 }
 
 export default new doctorAPI();

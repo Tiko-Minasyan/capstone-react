@@ -77,9 +77,19 @@ export default function Header() {
 		history.push("/admin/registerAdmin");
 	};
 
-	const profile = () => {
-		handleClose();
-		history.push("/admin/profile");
+	const archivedDoctors = () => {
+		handleCloseLinks();
+		history.push("/admin/archive/doctors");
+	};
+
+	const archivedPatients = () => {
+		handleCloseLinks();
+		history.push("/admin/archive/patients");
+	};
+
+	const archivedDiagnoses = () => {
+		handleCloseLinks();
+		history.push("/admin/archive/diagnoses");
 	};
 
 	const edit = () => {
@@ -123,12 +133,18 @@ export default function Header() {
 					>
 						<MenuItem onClick={allDoctors}>See All Doctors</MenuItem>
 						<MenuItem onClick={newDoctor}>Add a New Doctor</MenuItem>
-						<MenuItem onClick={newAdmin}>Add a New Admin</MenuItem>
+						<MenuItem onClick={newAdmin}>Add a New Admin</MenuItem> <hr />
+						<MenuItem onClick={archivedDoctors}>View Archived Doctors</MenuItem>
+						<MenuItem onClick={archivedPatients}>
+							View Archived Patients
+						</MenuItem>
+						<MenuItem onClick={archivedDiagnoses}>
+							View Archived Diagnoses
+						</MenuItem>
 					</Menu>
 					<Typography variant="h6" className={classes.title}>
-						<span className={classes.pointer} onClick={profile}>
+						<span className={classes.pointer} onClick={allDoctors}>
 							Medical Center Application
-							{/* {admin.name} {admin.surname} */}
 						</span>
 					</Typography>
 					<div>
@@ -159,7 +175,6 @@ export default function Header() {
 							open={open}
 							onClose={handleClose}
 						>
-							<MenuItem onClick={profile}>Profile</MenuItem>
 							<MenuItem onClick={edit}>Edit account</MenuItem>
 							<MenuItem onClick={logout}>Logout</MenuItem>
 						</Menu>

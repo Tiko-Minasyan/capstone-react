@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Container, makeStyles, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import doctorAPI from "../api/doctor.api";
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -19,19 +20,25 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function EditImagePage() {
-	// const [image, setImage] = React.useState("");
+	const [image, setImage] = React.useState({});
 
 	const classes = useStyles();
 
-	const formSubmit = (e) => {
-		e.preventDefault();
+	const selectImage = (e) => {
+		setImage(e.target.files[0]);
 	};
 
-	const a = (e) => {
-		// console.log("SUBMITTED");
-		// console.log(e.target.files[0]);
-		// console.log(typeof e.target.files);
-		// console.log(e.target.result);
+	const formSubmit = (e) => {
+		e.preventDefault();
+
+		if (!image) return;
+
+		const formData = new FormData();
+		formData.append("file", image);
+
+		doctorAPI.updatePicture(formData).then((res) => {
+			// console.log(res);
+		});
 	};
 
 	return (
@@ -39,13 +46,14 @@ export default function EditImagePage() {
 			<Container component="main" maxWidth="xs">
 				<div className={classes.paper}>
 					<Typography component="h1" variant="h5">
-						Edit Password
+						Update profile picture
 					</Typography>
 					<form className={classes.form} noValidate onSubmit={formSubmit}>
 						<Button variant="contained" component="label">
 							Upload File
-							<input type="file" hidden onChange={a} />
+							<input type="file" id="file" hidden onChange={selectImage} />
 						</Button>
+						<span> Image {image ? "selected" : "not selected"}</span>
 						<Button
 							type="submit"
 							fullWidth
@@ -53,7 +61,7 @@ export default function EditImagePage() {
 							color="primary"
 							className={classes.submit}
 						>
-							Update account
+							Save changes
 						</Button>
 						<Link to="/edit" variant="body2">
 							Back to edit page

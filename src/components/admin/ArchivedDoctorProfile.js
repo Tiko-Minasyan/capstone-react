@@ -9,19 +9,14 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import adminAPI from "../../api/admin.api";
 import {
-	FormControlLabel,
-	FormLabel,
 	makeStyles,
 	Paper,
-	Radio,
-	RadioGroup,
 	Table,
 	TableBody,
 	TableCell,
 	TableContainer,
 	TableHead,
 	TableRow,
-	TextField,
 } from "@material-ui/core";
 
 const useStyles = makeStyles({
@@ -54,37 +49,14 @@ const useStyles = makeStyles({
 
 export default function AdminDoctorProfile() {
 	const [doctor, setDoctor] = React.useState({});
-	const [date, setDate] = React.useState("");
 	const [warnings, setWarnings] = React.useState([]);
 	const [diagnoses, setDiagnoses] = React.useState([]);
-	const [newWarning, setNewWarning] = React.useState({ severity: "low" });
-	const [newWarningError, setNewWarningError] = React.useState("");
-	const [deleteReason, setDeleteReason] = React.useState("");
-	const [deleteReasonError, setDeleteReasonError] = React.useState("");
-	const [openWarning, setOpenWarning] = React.useState(false);
-	const [openDelete, setOpenDelete] = React.useState(false);
 	const [open, setOpen] = React.useState(false);
 	const [openedDiagnosis, setOpenedDiagnosis] = React.useState({});
 
 	const { id } = useParams();
 	const history = useHistory();
 	const classes = useStyles();
-
-	const handleWarningOpen = () => {
-		setOpenWarning(true);
-	};
-
-	const handleWarningClose = () => {
-		setOpenWarning(false);
-	};
-
-	const handleDeleteOpen = () => {
-		setOpenDelete(true);
-	};
-
-	const handleDeleteClose = () => {
-		setOpenDelete(false);
-	};
 
 	const handleClickOpen = (index, id, isFinished) => {
 		setOpen(true);
@@ -95,30 +67,19 @@ export default function AdminDoctorProfile() {
 		setOpen(false);
 	};
 
-	const handleSeverityChange = (e) => {
-		setNewWarning({ ...newWarning, severity: e.target.value });
-	};
-
-	const onWarningDetailsChange = (e) => {
-		setNewWarning({ ...newWarning, details: e.target.value });
-		setNewWarningError("");
-	};
-
-	const onDeleteReasonChange = (e) => {
-		setDeleteReason(e.target.value);
-		setDeleteReasonError("");
-	};
-
 	// eslint-disable-next-line
 	useEffect(() => getDoctor(), []);
 
 	const getDoctor = () => {
-		adminAPI.getDoctor(id).then((res) => {
+		adminAPI.getArchivedDoctor(id).then((res) => {
 			if (res === 404) return history.push("/admin/viewDoctors");
 
 			// console.log(res);
-			const date = res.data.doctor.createdAt.split("T")[0].split("-");
-			setDate(date[2] + "/" + date[1] + "/" + date[0]);
+			let date = res.data.doctor.createdAt.split("T")[0].split("-");
+			res.data.doctor.createdAt = date[2] + "/" + date[1] + "/" + date[0];
+
+			date = res.data.doctor.deletedAt.split("T")[0].split("-");
+			res.data.doctor.deletedAt = date[2] + "/" + date[1] + "/" + date[0];
 
 			setDoctor(res.data.doctor);
 
@@ -149,44 +110,17 @@ export default function AdminDoctorProfile() {
 	};
 
 	const back = () => {
-		history.push("/admin/viewDoctors");
-	};
-
-	const submitWarning = () => {
-		if (!newWarning.details) {
-			setNewWarningError("Please write the warning details!");
-		} else {
-			adminAPI.submitWarning(id, newWarning).then(() => {
-				setNewWarning({ severity: "low" });
-				handleWarningClose();
-				getDoctor();
-			});
-		}
-	};
-
-	const deleteDoctor = () => {
-		if (!deleteReason) {
-			setDeleteReasonError("Please write the reason for deleting");
-		} else {
-			adminAPI.deleteDoctor(id, deleteReason).then(() => {
-				history.push("/admin/viewDoctors");
-			});
-		}
+		history.push("/admin/archive/doctors");
 	};
 
 	return (
 		<>
 			<div>
 				<Button onClick={back} startIcon={<ArrowBackIcon />}>
-					Back to doctors page
+					Back to doctors archive page
 				</Button>
 				<div className={classes.container}>
 					<div className={classes.doctorContainer}>
-						<img
-							src={`http://localhost:8000/images/${doctor.photo}`}
-							alt="Doctor"
-							className={classes.image}
-						/>
 						<div className={classes.info}>
 							<h1>
 								{doctor.name} {doctor.surname}
@@ -198,31 +132,15 @@ export default function AdminDoctorProfile() {
 							<p>
 								Address: {doctor.address ? doctor.address : "Not registered"}
 							</p>
-							<p>Created at: {date}</p>
+							<p>Created at: {doctor.createdAt}</p>
+							<p>Deleted at: {doctor.deletedAt}</p>
+							<p>Delete reason: {doctor.deleteReason}</p>
 						</div>
-					</div>
-
-					<div>
-						<Button
-							variant="contained"
-							onClick={handleWarningOpen}
-							className={classes.btn}
-						>
-							Write a warning
-						</Button>{" "}
-						<Button
-							variant="contained"
-							color="secondary"
-							onClick={handleDeleteOpen}
-							className={classes.btn}
-						>
-							Delete doctor
-						</Button>
 					</div>
 				</div>
 
 				<div>
-					{warnings.length === 0 && <h1>The doctor has no warnings</h1>}
+					{warnings.length === 0 && <h1>The doctor had no warnings</h1>}
 					{warnings.map((warning) => (
 						<div>
 							<h1>Warning text: {warning.details}</h1>
@@ -234,7 +152,10 @@ export default function AdminDoctorProfile() {
 
 				<div>
 					{diagnoses.length === 0 ? (
-						<h1>The doctor has not written any diagnoses</h1>
+						<h1>
+							The doctor did not write any diagnoses, or the diagnoses have been
+							archived
+						</h1>
 					) : (
 						<TableContainer component={Paper}>
 							<Table className={classes.table} aria-label="simple table">
@@ -283,96 +204,6 @@ export default function AdminDoctorProfile() {
 					)}
 				</div>
 			</div>
-
-			{/* 	WARNING ADD DIALOG	 */}
-			<Dialog
-				open={openWarning}
-				onClose={handleWarningClose}
-				aria-labelledby="form-dialog-title"
-				fullWidth
-			>
-				<DialogTitle id="form-dialog-title">Write a warning</DialogTitle>
-				<DialogContent>
-					<TextField
-						margin="dense"
-						id="phone"
-						label="Warning details"
-						fullWidth
-						multiline
-						onChange={onWarningDetailsChange}
-						value={newWarning.details}
-						error={!!newWarningError}
-						helperText={newWarningError}
-					/>
-					<FormLabel component="legend" className={classes.radio}>
-						Warning Severity
-					</FormLabel>
-					<RadioGroup
-						aria-label="gender"
-						name="severity"
-						value={newWarning.severity}
-						onChange={handleSeverityChange}
-					>
-						<FormControlLabel value="low" control={<Radio />} label="Low" />
-						<FormControlLabel
-							value="medium"
-							control={<Radio />}
-							label="Medium"
-						/>
-						<FormControlLabel value="high" control={<Radio />} label="High" />
-						<FormControlLabel
-							value="very high"
-							control={<Radio />}
-							label="Very High"
-						/>
-					</RadioGroup>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleWarningClose} color="secondary">
-						Cancel
-					</Button>
-					<Button onClick={submitWarning} color="primary">
-						Submit Warning
-					</Button>
-				</DialogActions>
-			</Dialog>
-
-			{/* 	DELETE DIALOG	 */}
-			<Dialog
-				open={openDelete}
-				onClose={handleDeleteClose}
-				aria-labelledby="alert-dialog-title"
-				aria-describedby="alert-dialog-description"
-			>
-				<DialogTitle id="alert-dialog-title">Delete the doctor?</DialogTitle>
-				<DialogContent>
-					<DialogContentText id="alert-dialog-description">
-						Are you sure you want to delete this doctor?
-						{warnings.length === 0 &&
-							" Attention: This doctor has not received any warnings!"}
-					</DialogContentText>
-
-					<TextField
-						margin="dense"
-						id="phone"
-						label="Delete reason"
-						fullWidth
-						multiline
-						onChange={onDeleteReasonChange}
-						value={deleteReason}
-						error={!!deleteReasonError}
-						helperText={deleteReasonError}
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleDeleteClose} color="primary" autoFocus>
-						Cancel
-					</Button>
-					<Button onClick={deleteDoctor} color="secondary">
-						Delete
-					</Button>
-				</DialogActions>
-			</Dialog>
 
 			<Dialog
 				open={open}

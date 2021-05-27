@@ -89,7 +89,7 @@ export default function AdminSignIn() {
 		if (!error) {
 			adminAPI.registerAdmin(name, surname, position, email).then((res) => {
 				if (res === 409) setEmailError("Email already registered!");
-				else history.push("/admin/profile");
+				else history.push("/admin/viewDoctors");
 			});
 		}
 	};

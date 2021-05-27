@@ -348,6 +348,8 @@ export default function BasicTable() {
 		});
 	};
 
+	const emptyRows = 10 - Math.min(10, count - page * 10);
+
 	return (
 		<div>
 			<div className={classes.background}></div>
@@ -428,6 +430,12 @@ export default function BasicTable() {
 									<TableCell>{getAge(patient.birthday)}</TableCell>
 								</TableRow>
 							))}
+
+							{emptyRows > 0 && (
+								<TableRow style={{ height: 53 * emptyRows }}>
+									<TableCell colSpan={6} />
+								</TableRow>
+							)}
 						</TableBody>
 					</Table>
 				</TableContainer>

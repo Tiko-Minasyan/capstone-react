@@ -16,13 +16,18 @@ import PatientsPage from "./components/PatientsPage";
 import PatientProfile from "./components/PatientProfile";
 
 import AdminLoginPage from "./components/admin/AdminLoginPage";
-import AdminPage from "./components/admin/AdminPage";
 import AdminRegisterPage from "./components/admin/AdminRegisterPage";
 import AdminRegisterAdminPage from "./components/admin/AdminRegisterAdminPage";
 import AdminEditPage from "./components/admin/AdminEditPage";
 import AdminDoctorsPage from "./components/admin/AdminDoctorsPage";
 import AdminDoctorProfile from "./components/admin/AdminDoctorProfile";
 import AdminHeader from "./components/admin/AdminHeader";
+
+import ArchivedDoctorsPage from "./components/admin/ArchivedDoctorsPage";
+import ArchivedDoctorProfile from "./components/admin/ArchivedDoctorProfile";
+import ArchivedPatientsPage from "./components/admin/ArchivedPatientsPage";
+import ArchivedPatientProfile from "./components/admin/ArchivedPatientProfile";
+import ArchivedDiagnosesPage from "./components/admin/ArchivedDiagnosesPage";
 
 function App() {
 	setAuthToken();
@@ -61,10 +66,6 @@ function App() {
 				<Route path="/admin/" exact>
 					<AdminLoginPage />
 				</Route>
-				<Route path="/admin/profile" exact>
-					<AdminHeader />
-					<AdminPage />
-				</Route>
 				<Route path="/admin/register">
 					<AdminHeader />
 					<AdminRegisterPage />
@@ -84,6 +85,27 @@ function App() {
 				<Route path="/admin/viewDoctors/:id">
 					<AdminHeader />
 					<AdminDoctorProfile />
+				</Route>
+
+				<Route path="/admin/archive/doctors" exact>
+					<AdminHeader />
+					<ArchivedDoctorsPage />
+				</Route>
+				<Route path="/admin/archive/doctors/:id">
+					<AdminHeader />
+					<ArchivedDoctorProfile />
+				</Route>
+				<Route path="/admin/archive/patients" exact>
+					<AdminHeader />
+					<ArchivedPatientsPage />
+				</Route>
+				<Route path="/admin/archive/patients/:id">
+					<AdminHeader />
+					<ArchivedPatientProfile />
+				</Route>
+				<Route path="/admin/archive/diagnoses">
+					<AdminHeader />
+					<ArchivedDiagnosesPage />
 				</Route>
 
 				<Route path="/">

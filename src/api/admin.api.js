@@ -29,6 +29,7 @@ class adminAPI {
 			profession,
 			email,
 		}).catch((e) => {
+			console.log(e.response);
 			return e.response.status;
 		});
 	}
@@ -82,8 +83,66 @@ class adminAPI {
 		});
 	}
 
-	deleteDoctor(id) {
-		return API.delete("/admins/doctor/" + id).catch((e) => {
+	submitWarning(id, data) {
+		return API.post("/admins/warning/" + id, data).catch((e) => {
+			console.log("error: ", e.response);
+			return e.response.status;
+		});
+	}
+
+	deleteDoctor(id, deleteReason) {
+		return API.delete("/admins/doctor/" + id, { data: { deleteReason } }).catch(
+			(e) => {
+				console.log("error: ", e.response);
+				return e.response.status;
+			}
+		);
+	}
+
+	getArchivedDoctors(skip) {
+		return API.get(`/archives/getDoctors?skip=${skip}`).catch((e) => {
+			console.log("error: ", e.response);
+			return e.response.status;
+		});
+	}
+
+	searchArchivedDoctors(name, profession, skip) {
+		return API.post(`/archives/getDoctors?skip=${skip}`, {
+			name,
+			profession,
+		}).catch((e) => console.log("error: ", e.response));
+	}
+
+	getArchivedDoctor(id) {
+		return API.get("/archives/getDoctor/" + id).catch((e) => {
+			console.log("error: ", e.response);
+			return e.response.status;
+		});
+	}
+
+	getArchivedPatients(skip) {
+		return API.get(`/archives/getPatients?skip=${skip}`).catch((e) => {
+			console.log("error: ", e.response);
+			return e.response.status;
+		});
+	}
+
+	searchArchivedPatientsByName(name, skip) {
+		return API.post(`/archives/getPatients/name?skip=${skip}`, { name }).catch(
+			(e) => {
+				console.log("error: ", e.response);
+			}
+		);
+	}
+
+	searchArchivedPatientsById(id) {
+		return API.post("/archives/getPatients/id", { id }).catch((e) => {
+			console.log("error: ", e.response);
+		});
+	}
+
+	getArchivedPatient(id) {
+		return API.get("/archives/getPatient/" + id).catch((e) => {
 			console.log("error: ", e.response);
 			return e.response.status;
 		});

@@ -32,6 +32,8 @@ export default function PatientProfile() {
 
 	const [update, setUpdate] = React.useState({});
 	const [addressError, setAddressError] = React.useState("");
+	const [deleteReason, setDeleteReason] = React.useState("");
+	const [deleteReasonError, setDeleteReasonError] = React.useState("");
 	const [openEdit, setOpenEdit] = React.useState(false);
 	const [openDelete, setOpenDelete] = React.useState(false);
 
@@ -62,6 +64,11 @@ export default function PatientProfile() {
 	const onAddressChange = (e) => {
 		setUpdate({ ...update, address: e.target.value });
 		setAddressError("");
+	};
+
+	const onDeleteReasonChange = (e) => {
+		setDeleteReason(e.target.value);
+		setDeleteReasonError("");
 	};
 
 	useEffect(() => {
@@ -111,9 +118,13 @@ export default function PatientProfile() {
 	};
 
 	const deletePatient = () => {
-		patientAPI.deletePatient(id).then(() => {
-			history.push("/patients");
-		});
+		if (!deleteReason) {
+			setDeleteReasonError("Please write the reason for deleting");
+		} else {
+			patientAPI.deletePatient(id, deleteReason).then(() => {
+				history.push("/patients");
+			});
+		}
 	};
 
 	const back = () => {
@@ -207,6 +218,18 @@ export default function PatientProfile() {
 						<DialogContentText id="alert-dialog-description">
 							Are you sure you want to delete this patient?
 						</DialogContentText>
+
+						<TextField
+							margin="dense"
+							id="phone"
+							label="Delete reason"
+							fullWidth
+							multiline
+							onChange={onDeleteReasonChange}
+							value={deleteReason}
+							error={!!deleteReasonError}
+							helperText={deleteReasonError}
+						/>
 					</DialogContent>
 					<DialogActions>
 						<Button onClick={handleDeleteClose} color="primary" autoFocus>

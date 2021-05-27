@@ -55,7 +55,7 @@ export default function SignIn() {
 	useEffect(() => {
 		if (!!localStorage.getItem("token")) {
 			doctorAPI.getProfile().then((res) => {
-				if (res === 409) return history.push("/admin/profile");
+				if (res === 409) return history.push("/admin/viewDoctors");
 				if (res === 403) return localStorage.removeItem("token");
 				if (res === 404) return localStorage.removeItem("token");
 
