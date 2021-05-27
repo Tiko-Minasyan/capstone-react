@@ -7,23 +7,30 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { isEmail } from "validator";
-import { Grid } from "@material-ui/core";
+import { Grid, Paper } from "@material-ui/core";
 import adminAPI from "../../api/admin.api";
 
 const useStyles = makeStyles((theme) => ({
+	container: {
+		width: "500px",
+		padding: "20px",
+		paddingTop: 0,
+	},
+	flex: {
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
+		height: "700px",
+	},
 	paper: {
-		marginTop: theme.spacing(8),
+		marginTop: theme.spacing(5),
 		display: "flex",
 		flexDirection: "column",
 		alignItems: "center",
 	},
-	avatar: {
-		margin: theme.spacing(1),
-		backgroundColor: theme.palette.secondary.main,
-	},
 	form: {
 		width: "100%",
-		marginTop: theme.spacing(1),
+		marginTop: theme.spacing(3),
 	},
 	submit: {
 		margin: theme.spacing(3, 0, 2),
@@ -95,79 +102,83 @@ export default function AdminSignIn() {
 	};
 
 	return (
-		<Container component="main" maxWidth="xs" className={classes.container}>
-			<CssBaseline />
-			<div className={classes.paper}>
-				<Typography component="h1" variant="h5">
-					Register a New Doctor
-				</Typography>
-				<form className={classes.form} noValidate onSubmit={formSubmit}>
-					<Grid container spacing={2}>
-						<Grid item xs={12} sm={6}>
-							<TextField
-								name="name"
-								variant="outlined"
+		<div className={classes.flex}>
+			<Paper className={classes.container} elevation={5}>
+				<Container component="Paperr" maxWidth="xs">
+					<CssBaseline />
+					<div className={classes.paper}>
+						<Typography component="h1" variant="h5">
+							Register a New Doctor
+						</Typography>
+						<form className={classes.form} noValidate onSubmit={formSubmit}>
+							<Grid container spacing={2}>
+								<Grid item xs={12} sm={6}>
+									<TextField
+										name="name"
+										variant="outlined"
+										fullWidth
+										id="name"
+										label="Doctor Name"
+										autoFocus
+										value={name}
+										onChange={onNameChange}
+										error={!!nameError}
+										helperText={nameError}
+									/>
+								</Grid>
+								<Grid item xs={12} sm={6}>
+									<TextField
+										variant="outlined"
+										fullWidth
+										id="surname"
+										label="Doctor Surname"
+										name="surname"
+										value={surname}
+										onChange={onSurnameChange}
+										error={!!surnameError}
+										helperText={surnameError}
+									/>
+								</Grid>
+								<Grid item xs={12}>
+									<TextField
+										variant="outlined"
+										fullWidth
+										id="profession"
+										label="Doctor Profession"
+										name="profession"
+										value={profession}
+										onChange={onProfessionChange}
+										error={!!professionError}
+										helperText={professionError}
+									/>
+								</Grid>
+								<Grid item xs={12}>
+									<TextField
+										variant="outlined"
+										fullWidth
+										id="email"
+										label="Email Address"
+										name="email"
+										value={email}
+										onChange={onEmailChange}
+										error={!!emailError}
+										helperText={emailError}
+									/>
+								</Grid>
+							</Grid>
+							<Button
+								type="submit"
 								fullWidth
-								id="name"
-								label="Doctor Name"
-								autoFocus
-								value={name}
-								onChange={onNameChange}
-								error={!!nameError}
-								helperText={nameError}
-							/>
-						</Grid>
-						<Grid item xs={12} sm={6}>
-							<TextField
-								variant="outlined"
-								fullWidth
-								id="surname"
-								label="Doctor Surname"
-								name="surname"
-								value={surname}
-								onChange={onSurnameChange}
-								error={!!surnameError}
-								helperText={surnameError}
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<TextField
-								variant="outlined"
-								fullWidth
-								id="profession"
-								label="Doctor Profession"
-								name="profession"
-								value={profession}
-								onChange={onProfessionChange}
-								error={!!professionError}
-								helperText={professionError}
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<TextField
-								variant="outlined"
-								fullWidth
-								id="email"
-								label="Email Address"
-								name="email"
-								value={email}
-								onChange={onEmailChange}
-								error={!!emailError}
-								helperText={emailError}
-							/>
-						</Grid>
-					</Grid>
-					<Button
-						type="submit"
-						fullWidth
-						variant="contained"
-						color="primary"
-						className={classes.submit}
-					>
-						Register
-					</Button>
-				</form>
-			</div>
-		</Container>
+								variant="contained"
+								color="primary"
+								className={classes.submit}
+							>
+								Register
+							</Button>
+						</form>
+					</div>
+				</Container>
+			</Paper>
+		</div>
 	);
 }

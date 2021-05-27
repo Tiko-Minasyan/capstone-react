@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Container, makeStyles, Typography } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import doctorAPI from "../api/doctor.api";
 
 const useStyles = makeStyles((theme) => ({
@@ -17,27 +17,46 @@ const useStyles = makeStyles((theme) => ({
 	submit: {
 		margin: theme.spacing(3, 0, 2),
 	},
+	error: {
+		color: "red",
+	},
+	flex: {
+		display: "flex",
+		justifyContent: "space-between",
+	},
 }));
 
 export default function EditImagePage() {
-	const [image, setImage] = React.useState({});
+	const [image, setImage] = React.useState("");
+	const [error, setError] = React.useState("");
 
 	const classes = useStyles();
+	const history = useHistory();
 
 	const selectImage = (e) => {
 		setImage(e.target.files[0]);
+		setError("");
 	};
 
 	const formSubmit = (e) => {
 		e.preventDefault();
 
-		if (!image) return;
+		if (!image) return setError("Please select a picture!");
 
 		const formData = new FormData();
 		formData.append("file", image);
 
 		doctorAPI.updatePicture(formData).then((res) => {
-			// console.log(res);
+			if (res === 403)
+				return setError("Wrong file format. Please select a picture!");
+
+			history.push("/profile");
+		});
+	};
+
+	const deletePicture = (e) => {
+		doctorAPI.deletePicture().then(() => {
+			history.push("/profile");
 		});
 	};
 
@@ -49,11 +68,23 @@ export default function EditImagePage() {
 						Update profile picture
 					</Typography>
 					<form className={classes.form} noValidate onSubmit={formSubmit}>
-						<Button variant="contained" component="label">
-							Upload File
-							<input type="file" id="file" hidden onChange={selectImage} />
-						</Button>
-						<span> Image {image ? "selected" : "not selected"}</span>
+						<div className={classes.flex}>
+							<Button variant="contained" component="label">
+								Upload Picture
+								<input type="file" id="file" hidden onChange={selectImage} />
+							</Button>
+							<Button
+								variant="contained"
+								component="label"
+								onClick={deletePicture}
+							>
+								Delete your picture
+							</Button>
+						</div>
+						<p style={{ textAlign: "center" }}>
+							Image {image ? "selected" : "not selected"}
+						</p>
+						{error && <p className={classes.error}>{error}</p>}
 						<Button
 							type="submit"
 							fullWidth
@@ -61,7 +92,7 @@ export default function EditImagePage() {
 							color="primary"
 							className={classes.submit}
 						>
-							Save changes
+							Upload selected picture
 						</Button>
 						<Link to="/edit" variant="body2">
 							Back to edit page

@@ -1,8 +1,8 @@
 import API from "../axios";
 
 class DiagnosisAPI {
-	getDiagnoses(id) {
-		return API.get("/diagnoses/" + id).catch((e) => {
+	getDiagnoses(id, skip) {
+		return API.get(`/diagnoses/${id}?skip=${skip}`).catch((e) => {
 			console.log(e);
 		});
 	}
@@ -21,6 +21,15 @@ class DiagnosisAPI {
 
 	delete(id) {
 		return API.delete("/diagnoses/" + id).catch((e) => {
+			console.log(e);
+		});
+	}
+
+	search(id, profession, finished, skip) {
+		return API.post(`/diagnoses/search/${id}?skip=${skip}`, {
+			profession,
+			finished,
+		}).catch((e) => {
 			console.log(e);
 		});
 	}

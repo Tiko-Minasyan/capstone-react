@@ -11,26 +11,69 @@ import adminApi from "../../api/admin.api";
 import { useHistory } from "react-router";
 import { Button, TablePagination, TextField } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
+import AddCircleIcon from "@material-ui/icons/AddCircle";
 
 const useStyles = makeStyles({
+	background: {
+		background: "#707690",
+		position: "absolute",
+		width: "100%",
+		height: "100vh",
+		zIndex: "-1",
+		top: 0,
+	},
 	table: {
 		minWidth: 650,
+	},
+	header: {
+		fontWeight: "bold",
+		fontSize: "15px",
 	},
 	button: {
 		width: "16%",
 	},
-	hover: {
+	row: {
 		cursor: "pointer",
+		"&:nth-of-type(odd)": {
+			background: "lightgray",
+		},
+		"&:hover": {
+			background: "gray !important",
+		},
 	},
 	flex: {
 		display: "flex",
 		height: "70px",
+		alignItems: "center",
+		justifyContent: "space-between",
+		margin: "10px 20px",
+		marginLeft: "5px",
+	},
+	flexDiv: {
+		display: "flex",
+		height: "70px",
+		alignItems: "center",
+	},
+	flexEnd: {
+		display: "flex",
+		justifyContent: "flex-end",
+		padding: "10px 10px",
+	},
+	title: {
+		background: "#e0e0e0",
+		width: "200px",
+		borderRadius: "5px",
+		height: "80%",
+		display: "flex",
+		justifyContent: "center",
 		alignItems: "center",
 	},
 	search: {
 		margin: "5px",
 		marginRight: 0,
 		width: "400px",
+		background: "#e0e0e0",
+		borderRadius: "3px",
 	},
 	searchBtn: {
 		width: "150px",
@@ -101,37 +144,59 @@ export default function BasicTable() {
 		getDoctors(0);
 	};
 
+	const newDoctor = () => {
+		history.push("/admin/register");
+	};
+
+	const emptyRows = 10 - Math.min(10, count - page * 10);
+
 	return (
 		<div>
+			<div className={classes.background}></div>
 			<div className={classes.flex}>
-				<TextField
-					className={classes.search}
-					variant="filled"
-					label="Search by name, surname"
-					value={nameSearch}
-					onChange={onNameSearchChange}
-				/>
-				<TextField
-					className={classes.search}
-					variant="filled"
-					label="Search by profession"
-					value={professionSearch}
-					onChange={onProfessionSearchChange}
-				/>
+				<div className={classes.flexDiv}>
+					<TextField
+						className={classes.search}
+						variant="filled"
+						label="Search by name, surname"
+						value={nameSearch}
+						onChange={onNameSearchChange}
+					/>
+					<TextField
+						className={classes.search}
+						variant="filled"
+						label="Search by profession"
+						value={professionSearch}
+						onChange={onProfessionSearchChange}
+					/>
+					<Button
+						variant="contained"
+						className={classes.searchBtn}
+						startIcon={<SearchIcon />}
+						onClick={() => search(0)}
+					>
+						Search
+					</Button>
+					<Button
+						variant="contained"
+						className={classes.searchBtn}
+						onClick={clearSearch}
+					>
+						Clear search
+					</Button>
+				</div>
+
+				<div className={classes.title}>
+					<h2>Doctors Page</h2>
+				</div>
+			</div>
+			<div className={classes.flexEnd}>
 				<Button
+					startIcon={<AddCircleIcon />}
+					onClick={newDoctor}
 					variant="contained"
-					className={classes.searchBtn}
-					startIcon={<SearchIcon />}
-					onClick={() => search(0)}
 				>
-					Search
-				</Button>
-				<Button
-					variant="contained"
-					className={classes.searchBtn}
-					onClick={clearSearch}
-				>
-					Clear search
+					Register a new doctor
 				</Button>
 			</div>
 			<Paper>
@@ -139,9 +204,13 @@ export default function BasicTable() {
 					<Table className={classes.table} aria-label="simple table">
 						<TableHead>
 							<TableRow>
-								<TableCell>Doctor Full Name</TableCell>
-								<TableCell>Doctor Email</TableCell>
-								<TableCell>Doctor profession</TableCell>
+								<TableCell className={classes.header}>
+									Doctor Full Name
+								</TableCell>
+								<TableCell className={classes.header}>Doctor Email</TableCell>
+								<TableCell className={classes.header}>
+									Doctor profession
+								</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -149,8 +218,8 @@ export default function BasicTable() {
 								<TableRow
 									key={doctor._id}
 									hover
-									className={classes.hover}
 									onClick={() => openDoctor(doctor._id)}
+									className={classes.row}
 								>
 									<TableCell component="th" scope="row">
 										{doctor.name} {doctor.surname}
@@ -159,6 +228,12 @@ export default function BasicTable() {
 									<TableCell>{doctor.profession}</TableCell>
 								</TableRow>
 							))}
+
+							{emptyRows > 0 && (
+								<TableRow style={{ height: 53 * emptyRows }}>
+									<TableCell colSpan={6} />
+								</TableRow>
+							)}
 						</TableBody>
 					</Table>
 				</TableContainer>

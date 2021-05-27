@@ -8,7 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import diagnosisAPI from "../api/diagnosis.api";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Menu, MenuItem } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -18,6 +18,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
+import SearchIcon from "@material-ui/icons/Search";
+import { TablePagination } from "@material-ui/core";
 
 const useStyles = makeStyles({
 	diagnoses: {
@@ -46,12 +48,33 @@ const useStyles = makeStyles({
 	editField: {
 		marginBottom: "25px",
 	},
+	search: {
+		width: "300px",
+	},
+	finished: {
+		height: "58px",
+		marginLeft: "10px",
+		width: "280px",
+	},
+	searchBtn: {
+		height: "58px",
+		marginLeft: "10px",
+		width: "130px",
+	},
+	clearBtn: {
+		height: "58px",
+		marginLeft: "10px",
+		width: "160px",
+	},
 });
 
 export default function Diagnoses() {
 	const [diagnoses, setDiagnoses] = React.useState([]);
 	const [doctorId, setDoctorId] = React.useState("");
 	const [openedDiagnosis, setOpenedDiagnosis] = React.useState({});
+	const [page, setPage] = React.useState(0);
+	const [count, setCount] = React.useState(0);
+	const [isSearching, setIsSearching] = React.useState(false);
 
 	const [complains, setComplains] = React.useState("");
 	const [anamnesis, setAnamnesis] = React.useState("");
@@ -71,6 +94,14 @@ export default function Diagnoses() {
 	const [editCures, setEditCures] = React.useState([]);
 	const [editFinalDiagnosis, setEditFinalDiagnosis] = React.useState("");
 	const [editDiagnosisError, setEditDiagnosisError] = React.useState("");
+
+	const [professionSearch, setProfessionSearch] = React.useState("");
+	const [finishedSearch, setFinishedSearch] = React.useState("All");
+	const [searchVal, setSearchVal] = React.useState({
+		professionSearch,
+		finishedSearch,
+	});
+	const [anchorEl, setAnchorEl] = React.useState(null);
 
 	const [open, setOpen] = React.useState(false);
 	const [openDiagnosis, setOpenDiagnosis] = React.useState(false);
@@ -99,8 +130,21 @@ export default function Diagnoses() {
 		setEditing(false);
 	};
 
+	const handleClickMenu = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleCloseMenu = () => {
+		setAnchorEl(null);
+	};
+
 	const handleDiagnosisClose = () => {
 		setOpenDiagnosis(false);
+	};
+
+	const handleChangePage = (e, newPage) => {
+		setPage(newPage);
+		isSearching ? search(newPage * 10) : getDiagnoses(newPage * 10);
 	};
 
 	const onComplainsChange = (e) => {
@@ -154,8 +198,17 @@ export default function Diagnoses() {
 		setEditFinalDiagnosis(e.target.value);
 	};
 
+	const onProfessionSearchChange = (e) => {
+		setProfessionSearch(e.target.value);
+	};
+
+	const finished = (val) => {
+		setFinishedSearch(val);
+		handleCloseMenu();
+	};
+
 	useEffect(() => {
-		getDiagnoses(); // eslint-disable-next-line
+		getDiagnoses(0); // eslint-disable-next-line
 	}, []);
 
 	const addCure = () => {
@@ -248,8 +301,8 @@ export default function Diagnoses() {
 		);
 	};
 
-	const getDiagnoses = () => {
-		diagnosisAPI.getDiagnoses(id).then((res) => {
+	const getDiagnoses = (skip) => {
+		diagnosisAPI.getDiagnoses(id, skip).then((res) => {
 			if (res) {
 				res.data.diagnoses.forEach((item) => {
 					item.createdAt = timeFormat(item.createdAt);
@@ -259,6 +312,7 @@ export default function Diagnoses() {
 				});
 
 				setDiagnoses(res.data.diagnoses);
+				setCount(res.data.count);
 				setDoctorId(res.data.doctorId);
 			}
 		});
@@ -303,6 +357,44 @@ export default function Diagnoses() {
 		});
 	};
 
+	const search = (skip, btn = false) => {
+		if (btn) {
+			setPage(0);
+			setSearchVal({ professionSearch, finishedSearch });
+		} else {
+			searchFunc(skip);
+		}
+	};
+
+	// eslint-disable-next-line
+	useEffect(() => searchFunc(0), [searchVal]);
+
+	const searchFunc = (skip) => {
+		setIsSearching(true);
+
+		diagnosisAPI
+			.search(id, searchVal.professionSearch, searchVal.finishedSearch, skip)
+			.then((res) => {
+				res.data.diagnoses.forEach((item) => {
+					item.createdAt = timeFormat(item.createdAt);
+					item.updatedAt = timeFormat(item.updatedAt);
+
+					if (item.doctor === null) item.doctor = { ...item.archivedDoctor };
+				});
+
+				setDiagnoses(res.data.diagnoses);
+				setCount(res.data.count);
+			});
+	};
+
+	const clearSearch = () => {
+		getDiagnoses(0);
+		setIsSearching(false);
+		setPage(0);
+	};
+
+	const emptyRows = 10 - Math.min(10, count - page * 10);
+
 	return (
 		<div className={classes.diagnoses}>
 			<div className={classes.flex}>
@@ -311,6 +403,56 @@ export default function Diagnoses() {
 				<Button variant="contained" onClick={handleDiagnosisOpen}>
 					Write diagnosis
 				</Button>
+			</div>
+
+			<div>
+				<TextField
+					variant="filled"
+					label="Search by doctor profession"
+					className={classes.search}
+					value={professionSearch}
+					onChange={onProfessionSearchChange}
+				/>
+				<Button
+					aria-controls="simple-menu"
+					aria-haspopup="true"
+					onClick={handleClickMenu}
+					variant="outlined"
+					className={classes.finished}
+				>
+					Show diagnoses - {finishedSearch}
+				</Button>
+				<Button
+					startIcon={<SearchIcon />}
+					variant="contained"
+					color="primary"
+					className={classes.searchBtn}
+					onClick={() => search(0, true)}
+				>
+					Search
+				</Button>
+				<Button
+					variant="contained"
+					className={classes.clearBtn}
+					onClick={clearSearch}
+				>
+					Clear search
+				</Button>
+				<Menu
+					id="simple-menu"
+					anchorEl={anchorEl}
+					keepMounted
+					open={Boolean(anchorEl)}
+					onClose={handleCloseMenu}
+				>
+					<MenuItem onClick={() => finished("All")}>Show all</MenuItem>
+					<MenuItem onClick={() => finished("Finished")}>
+						Show finished
+					</MenuItem>
+					<MenuItem onClick={() => finished("Unfinished")}>
+						Show unfinished
+					</MenuItem>
+				</Menu>
 			</div>
 
 			{/* DIAGNOSES TABLE */}
@@ -358,9 +500,23 @@ export default function Diagnoses() {
 								<TableCell>{diagnosis.updatedAt}</TableCell>
 							</TableRow>
 						))}
+
+						{emptyRows > 0 && (
+							<TableRow style={{ height: 53 * emptyRows }}>
+								<TableCell colSpan={6} />
+							</TableRow>
+						)}
 					</TableBody>
 				</Table>
 			</TableContainer>
+			<TablePagination
+				component="div"
+				rowsPerPageOptions={[10]}
+				onChangePage={handleChangePage}
+				count={count}
+				page={page}
+				rowsPerPage={10}
+			/>
 
 			{/* WRITE NEW DIAGNOSIS DIALOG */}
 			<Dialog
@@ -476,7 +632,7 @@ export default function Diagnoses() {
 			{/* OPEN DIAGNOSIS DIALOG */}
 			<Dialog
 				open={open}
-				onClose={!editing && handleClose}
+				onClose={!editing ? handleClose : () => {}}
 				aria-labelledby="alert-dialog-title"
 				aria-describedby="alert-dialog-description"
 				fullWidth
@@ -487,13 +643,13 @@ export default function Diagnoses() {
 					{editing ? ( //		EDIT DIAGNOSIS
 						<>
 							<DialogContentText>Complains</DialogContentText>
-							<p>{splitText(openedDiagnosis.complains)}</p> <hr />
+							<div>{splitText(openedDiagnosis.complains)}</div> <hr />
 							<DialogContentText>Anamnesis</DialogContentText>
-							<p>{splitText(openedDiagnosis.anamnesis)}</p> <hr />
+							<div>{splitText(openedDiagnosis.anamnesis)}</div> <hr />
 							<DialogContentText>Objective status</DialogContentText>
-							<p>{splitText(openedDiagnosis.objectiveStatus)}</p> <hr />
+							<div>{splitText(openedDiagnosis.objectiveStatus)}</div> <hr />
 							<DialogContentText>Diagnosis</DialogContentText>
-							<p>{splitText(openedDiagnosis.diagnosis)}</p>
+							<div>{splitText(openedDiagnosis.diagnosis)}</div>
 							<TextField
 								autoFocus
 								fullWidth
@@ -508,12 +664,12 @@ export default function Diagnoses() {
 								className={classes.editField}
 							/>
 							<DialogContentText>Research plan</DialogContentText>
-							<p>{splitText(openedDiagnosis.researchPlan)}</p>
+							<div>{splitText(openedDiagnosis.researchPlan)}</div>
 							<DialogContentText>Cures</DialogContentText>
 							<ul>
 								{openedDiagnosis.cures &&
-									openedDiagnosis.cures.map((cure) => (
-										<li>{splitText(cure)}</li>
+									openedDiagnosis.cures.map((cure, index) => (
+										<li key={index}>{splitText(cure)}</li>
 									))}
 								{editCures.map((cure, index) => (
 									<TextField
@@ -556,20 +712,20 @@ export default function Diagnoses() {
 						//   READ DIAGNOSIS
 						<>
 							<DialogContentText>Complains</DialogContentText>
-							<p>{splitText(openedDiagnosis.complains)}</p> <hr />
+							<div>{splitText(openedDiagnosis.complains)}</div> <hr />
 							<DialogContentText>Anamnesis</DialogContentText>
-							<p>{splitText(openedDiagnosis.anamnesis)}</p> <hr />
+							<div>{splitText(openedDiagnosis.anamnesis)}</div> <hr />
 							<DialogContentText>Objective status</DialogContentText>
-							<p>{splitText(openedDiagnosis.objectiveStatus)}</p> <hr />
+							<div>{splitText(openedDiagnosis.objectiveStatus)}</div> <hr />
 							<DialogContentText>Diagnosis</DialogContentText>
-							<p>{splitText(openedDiagnosis.diagnosis)}</p> <hr />
+							<div>{splitText(openedDiagnosis.diagnosis)}</div> <hr />
 							<DialogContentText>Research plan</DialogContentText>
-							<p>{splitText(openedDiagnosis.researchPlan)}</p> <hr />
+							<div>{splitText(openedDiagnosis.researchPlan)}</div> <hr />
 							<DialogContentText>Cures</DialogContentText>
 							<ul>
 								{openedDiagnosis.cures &&
-									openedDiagnosis.cures.map((cure) => (
-										<li>{splitText(cure)}</li>
+									openedDiagnosis.cures.map((cure, index) => (
+										<li key={index}>{splitText(cure)}</li>
 									))}
 							</ul>
 							{openedDiagnosis.isFinished && (

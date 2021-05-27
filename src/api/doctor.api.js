@@ -46,6 +46,13 @@ class doctorAPI {
 			},
 		}).catch((e) => {
 			console.log(e);
+			return e.response.status;
+		});
+	}
+
+	deletePicture() {
+		return API.get("/doctors/deletePicture").catch((e) => {
+			console.log(e);
 		});
 	}
 }

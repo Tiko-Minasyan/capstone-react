@@ -3,7 +3,7 @@ import { useHistory, useParams } from "react-router";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import adminAPI from "../../api/admin.api";
-// import Diagnoses from "./Diagnoses";
+import ArchivedDiagnoses from "./ArchivedDiagnoses";
 import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles({
@@ -64,7 +64,7 @@ export default function PatientProfile() {
 	};
 
 	const back = () => {
-		history.push("/patients");
+		history.push("/admin/archive/patients");
 	};
 
 	return (
@@ -87,7 +87,7 @@ export default function PatientProfile() {
 				<p>SSID: {patient.SSID}</p>
 				<p>Delete reason: {patient.deleteReason}</p>
 				<p>Deleted at: {patient.deletedAt}</p>
-				{/* <Diagnoses /> */}
+				<ArchivedDiagnoses />
 			</div>
 		</div>
 	);

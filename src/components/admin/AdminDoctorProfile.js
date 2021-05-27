@@ -26,18 +26,21 @@ import {
 
 const useStyles = makeStyles({
 	btn: {
-		marginRight: "20px",
+		margin: "15px",
+	},
+	btnDiv: {
+		textAlign: "center",
 	},
 	container: {
 		display: "flex",
-		justifyContent: "space-between",
 		alignItems: "center",
 	},
 	doctorContainer: {
 		display: "flex",
 		alignItems: "center",
-		width: "50%",
-		justifyContent: "space-around",
+		margin: "10px",
+		padding: "20px",
+		maxWidth: "700px",
 	},
 	image: {
 		width: "240px",
@@ -45,6 +48,7 @@ const useStyles = makeStyles({
 	},
 	info: {
 		textAlign: "center",
+		padding: "20px",
 	},
 	radio: {
 		marginTop: "30px",
@@ -148,10 +152,6 @@ export default function AdminDoctorProfile() {
 		);
 	};
 
-	const back = () => {
-		history.push("/admin/viewDoctors");
-	};
-
 	const submitWarning = () => {
 		if (!newWarning.details) {
 			setNewWarningError("Please write the warning details!");
@@ -177,11 +177,8 @@ export default function AdminDoctorProfile() {
 	return (
 		<>
 			<div>
-				<Button onClick={back} startIcon={<ArrowBackIcon />}>
-					Back to doctors page
-				</Button>
 				<div className={classes.container}>
-					<div className={classes.doctorContainer}>
+					<Paper className={classes.doctorContainer} elevation={5}>
 						<img
 							src={`http://localhost:8000/images/${doctor.photo}`}
 							alt="Doctor"
@@ -200,16 +197,17 @@ export default function AdminDoctorProfile() {
 							</p>
 							<p>Created at: {date}</p>
 						</div>
-					</div>
+					</Paper>
 
-					<div>
+					<div className={classes.btnDiv}>
 						<Button
 							variant="contained"
 							onClick={handleWarningOpen}
 							className={classes.btn}
 						>
 							Write a warning
-						</Button>{" "}
+						</Button>
+						<br />
 						<Button
 							variant="contained"
 							color="secondary"
