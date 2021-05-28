@@ -82,14 +82,9 @@ export default function Diagnoses() {
 	const [anchorEl, setAnchorEl] = React.useState(null);
 
 	const [open, setOpen] = React.useState(false);
-	const [openDiagnosis, setOpenDiagnosis] = React.useState(false);
 
 	const { id } = useParams();
 	const classes = useStyles();
-
-	const handleDiagnosisOpen = () => {
-		setOpenDiagnosis(true);
-	};
 
 	const handleClickOpen = (index, id, isFinished) => {
 		setOpen(true);
@@ -135,18 +130,17 @@ export default function Diagnoses() {
 	};
 
 	const getDiagnoses = (skip) => {
-		// adminAPI.getDiagnoses(id, skip).then((res) => {
-		// 	if (res) {
-		// 		res.data.diagnoses.forEach((item) => {
-		// 			item.createdAt = timeFormat(item.createdAt);
-		// 			item.updatedAt = timeFormat(item.updatedAt);
-		// 			if (item.doctor === null) item.doctor = { ...item.archivedDoctor };
-		// 		});
-		// 		setDiagnoses(res.data.diagnoses);
-		// 		setCount(res.data.count);
-		// 		setDoctorId(res.data.doctorId);
-		// 	}
-		// });
+		adminAPI.getArchivedDiagnoses(id, skip).then((res) => {
+			if (res) {
+				res.data.diagnoses.forEach((item) => {
+					item.createdAt = timeFormat(item.createdAt);
+					item.updatedAt = timeFormat(item.updatedAt);
+					if (item.doctor === null) item.doctor = { ...item.archivedDoctor };
+				});
+				setDiagnoses(res.data.diagnoses);
+				setCount(res.data.count);
+			}
+		});
 	};
 
 	const splitText = (text) => {
@@ -168,19 +162,24 @@ export default function Diagnoses() {
 	const searchFunc = (skip) => {
 		setIsSearching(true);
 
-		// adminAPI
-		// 	.search(id, searchVal.professionSearch, searchVal.finishedSearch, skip)
-		// 	.then((res) => {
-		// 		res.data.diagnoses.forEach((item) => {
-		// 			item.createdAt = timeFormat(item.createdAt);
-		// 			item.updatedAt = timeFormat(item.updatedAt);
+		adminAPI
+			.searchArchivedDiagnoses(
+				id,
+				searchVal.professionSearch,
+				searchVal.finishedSearch,
+				skip
+			)
+			.then((res) => {
+				res.data.diagnoses.forEach((item) => {
+					item.createdAt = timeFormat(item.createdAt);
+					item.updatedAt = timeFormat(item.updatedAt);
 
-		// 			if (item.doctor === null) item.doctor = { ...item.archivedDoctor };
-		// 		});
+					if (item.doctor === null) item.doctor = { ...item.archivedDoctor };
+				});
 
-		// 		setDiagnoses(res.data.diagnoses);
-		// 		setCount(res.data.count);
-		// 	});
+				setDiagnoses(res.data.diagnoses);
+				setCount(res.data.count);
+			});
 	};
 
 	const clearSearch = () => {
@@ -195,10 +194,6 @@ export default function Diagnoses() {
 		<div className={classes.diagnoses}>
 			<div className={classes.flex}>
 				<h2>Diagnoses of this patient</h2>
-
-				<Button variant="contained" onClick={handleDiagnosisOpen}>
-					Write diagnosis
-				</Button>
 			</div>
 
 			<div>

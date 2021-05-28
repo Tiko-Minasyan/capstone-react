@@ -147,6 +147,40 @@ class adminAPI {
 			return e.response.status;
 		});
 	}
+
+	getArchivedDiagnoses(id, skip) {
+		return API.get(`/archives/getDiagnoses/${id}?skip=${skip}`).catch((e) => {
+			console.log("error: ", e.response);
+			return e.response.status;
+		});
+	}
+
+	searchArchivedDiagnoses(id, profession, finished, skip) {
+		return API.post(`/archives/getDiagnoses/${id}?skip=${skip}`, {
+			profession,
+			finished,
+		}).catch((e) => {
+			console.log(e);
+			return e.response.status;
+		});
+	}
+
+	getAllArchivedDiagnoses(skip) {
+		return API.get(`/archives/getDiagnoses?skip=${skip}`).catch((e) => {
+			console.log(e.response);
+			return e.response.status;
+		});
+	}
+
+	searchAllArchivedDiagnoses(profession, finished, skip) {
+		return API.post(`/archives/getDiagnoses?skip=${skip}`, {
+			profession,
+			finished,
+		}).catch((e) => {
+			console.log(e);
+			return e.response.status;
+		});
+	}
 }
 
 export default new adminAPI();

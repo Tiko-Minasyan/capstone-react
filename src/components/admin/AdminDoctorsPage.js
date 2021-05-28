@@ -78,7 +78,7 @@ const useStyles = makeStyles({
 	searchBtn: {
 		width: "150px",
 		height: "78%",
-		marginLeft: "20px",
+		marginLeft: "5px",
 	},
 });
 
