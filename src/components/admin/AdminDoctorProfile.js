@@ -26,20 +26,25 @@ import {
 const useStyles = makeStyles({
 	btn: {
 		margin: "15px",
+		width: "100%",
 	},
 	btnDiv: {
 		textAlign: "center",
 	},
 	container: {
-		display: "flex",
+		// display: "flex",
+		// alignItems: "center",
+		// justifyContent: "space-between",
+		display: "grid",
+		gridTemplateColumns: "4fr 1fr 5fr",
 		alignItems: "center",
+		height: "400px",
 	},
 	doctorContainer: {
 		display: "flex",
 		alignItems: "center",
 		margin: "10px",
 		padding: "20px",
-		maxWidth: "700px",
 	},
 	image: {
 		width: "240px",
@@ -48,6 +53,12 @@ const useStyles = makeStyles({
 	info: {
 		textAlign: "center",
 		padding: "20px",
+	},
+	warningTable: {
+		height: "100%",
+		width: "90%",
+		margin: "auto",
+		border: "1px solid black",
 	},
 	radio: {
 		marginTop: "30px",
@@ -173,6 +184,9 @@ export default function AdminDoctorProfile() {
 		}
 	};
 
+	// const emptyRowsWarning = 5 - Math.min(5, count - page * 5);
+	const emptyRowsWarning = 5 - 2;
+
 	return (
 		<>
 			<div>
@@ -216,9 +230,35 @@ export default function AdminDoctorProfile() {
 							Delete doctor
 						</Button>
 					</div>
+
+					<TableContainer>
+						<Table className={classes.warningTable} aria-label="simple table">
+							<TableHead>
+								<TableRow>
+									<TableCell>Warning details</TableCell>
+									<TableCell>Severity</TableCell>
+									<TableCell>Issued at</TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{warnings.map((warning, index) => (
+									<TableRow key={warning._id}>
+										<TableCell>{warning.details}</TableCell>
+										<TableCell>{warning.severity}</TableCell>
+										<TableCell>{warning.date}</TableCell>
+									</TableRow>
+								))}
+								{emptyRowsWarning > 0 && (
+									<TableRow style={{ height: 53 * emptyRowsWarning }}>
+										<TableCell colSpan={6} />
+									</TableRow>
+								)}
+							</TableBody>
+						</Table>
+					</TableContainer>
 				</div>
 
-				<div>
+				{/* <div>
 					{warnings.length === 0 && <h1>The doctor has no warnings</h1>}
 					{warnings.map((warning) => (
 						<div>
@@ -227,7 +267,7 @@ export default function AdminDoctorProfile() {
 							<h3>Written at: {warning.date}</h3>
 						</div>
 					))}
-				</div>
+				</div> */}
 
 				<div>
 					{diagnoses.length === 0 ? (
@@ -239,7 +279,7 @@ export default function AdminDoctorProfile() {
 									<TableRow>
 										<TableCell>Patient full name</TableCell>
 										<TableCell>Diagnosis</TableCell>
-										<TableCell>Patient SSID</TableCell>
+										<TableCell>Patient SSN</TableCell>
 										<TableCell>Is finished</TableCell>
 										<TableCell>Create date</TableCell>
 										<TableCell>Update date</TableCell>
@@ -266,7 +306,7 @@ export default function AdminDoctorProfile() {
 													View diagnosis
 												</Button>
 											</TableCell>
-											<TableCell>{diagnosis.patient.SSID}</TableCell>
+											<TableCell>{diagnosis.patient.SSN}</TableCell>
 											<TableCell>
 												{diagnosis.isFinished ? "Yes" : "No"}
 											</TableCell>
