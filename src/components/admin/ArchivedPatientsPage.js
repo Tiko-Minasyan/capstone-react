@@ -197,7 +197,7 @@ export default function BasicTable() {
 				<div>
 					<TextField
 						variant="filled"
-						label="Search by passport or ID card number or SSID"
+						label="Search by passport or ID card number or SSN"
 						className={classes.search}
 						value={idSearch}
 						onChange={onIdSearchChange}

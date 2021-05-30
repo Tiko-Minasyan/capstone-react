@@ -101,14 +101,14 @@ export default function BasicTable() {
 	const [phone, setPhone] = React.useState("");
 	const [address, setAddress] = React.useState("");
 	const [passportID, setPassportID] = React.useState("");
-	const [SSID, setSSID] = React.useState("");
+	const [SSN, setSSN] = React.useState("");
 	const [nameError, setNameError] = React.useState("");
 	const [surnameError, setSurnameError] = React.useState("");
 	const [fatherNameError, setFatherNameError] = React.useState("");
 	const [birthdayError, setBirthdayError] = React.useState("");
 	const [addressError, setAddressError] = React.useState("");
 	const [passportIDError, setPassportIDError] = React.useState("");
-	const [SSIDError, setSSIDError] = React.useState("");
+	const [SSNError, setSSNError] = React.useState("");
 
 	const [nameSearch, setNameSearch] = React.useState("");
 	const [idSearch, setIdSearch] = React.useState("");
@@ -167,9 +167,9 @@ export default function BasicTable() {
 		setPassportIDError("");
 	};
 
-	const onSSIDChange = (e) => {
-		setSSID(e.target.value);
-		setSSIDError("");
+	const onSSNChange = (e) => {
+		setSSN(e.target.value);
+		setSSNError("");
 	};
 
 	const onNameSearchChange = (e) => {
@@ -250,14 +250,14 @@ export default function BasicTable() {
 				error = true;
 			}
 		}
-		if (!SSID) {
-			setSSIDError("SSID is missing!");
+		if (!SSN) {
+			setSSNError("SSN is missing!");
 			error = true;
 		} else if (
-			!validator.isNumeric(SSID, { no_symbols: true }) ||
-			SSID.length !== 10
+			!validator.isNumeric(SSN, { no_symbols: true }) ||
+			SSN.length !== 10
 		) {
-			setSSIDError("Wrong SSID format!");
+			setSSNError("Wrong SSN format!");
 			error = true;
 		} // eslint-disable-next-line
 		if (selectedDate === null || selectedDate == "Invalid Date") {
@@ -298,7 +298,7 @@ export default function BasicTable() {
 				phone,
 				address,
 				passportID,
-				SSID,
+				SSN,
 			};
 			patientAPI.addPatient(data).then(() => {
 				setOpen(false);
@@ -309,7 +309,7 @@ export default function BasicTable() {
 				setPhone("");
 				setAddress("");
 				setPassportID("");
-				setSSID("");
+				setSSN("");
 				getPatients(0);
 				setPage(0);
 			});
@@ -376,7 +376,7 @@ export default function BasicTable() {
 				<div>
 					<TextField
 						variant="filled"
-						label="Search by passport or ID card number or SSID"
+						label="Search by passport or ID card number or SSN"
 						className={classes.search}
 						value={idSearch}
 						onChange={onIdSearchChange}
@@ -520,13 +520,13 @@ export default function BasicTable() {
 					/>
 					<TextField
 						margin="dense"
-						id="ssid"
-						label="SSID"
+						id="ssn"
+						label="SSN"
 						fullWidth
-						onChange={onSSIDChange}
-						value={SSID}
-						error={!!SSIDError}
-						helperText={SSIDError}
+						onChange={onSSNChange}
+						value={SSN}
+						error={!!SSNError}
+						helperText={SSNError}
 					/>
 					<TextField
 						margin="dense"

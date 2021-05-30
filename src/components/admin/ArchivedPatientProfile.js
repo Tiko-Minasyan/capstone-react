@@ -84,7 +84,7 @@ export default function PatientProfile() {
 				<p>Phone number: {patient.phone ? patient.phone : "Not registered"}</p>
 				<p>Address: {patient.address}</p>
 				<p>Passport / ID card number: {patient.passportID}</p>
-				<p>SSID: {patient.SSID}</p>
+				<p>SSN: {patient.SSN}</p>
 				<p>Delete reason: {patient.deleteReason}</p>
 				<p>Deleted at: {patient.deletedAt}</p>
 				<ArchivedDiagnoses />

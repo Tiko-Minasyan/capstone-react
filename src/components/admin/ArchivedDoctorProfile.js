@@ -163,7 +163,7 @@ export default function AdminDoctorProfile() {
 									<TableRow>
 										<TableCell>Patient full name</TableCell>
 										<TableCell>Diagnosis</TableCell>
-										<TableCell>Patient SSID</TableCell>
+										<TableCell>Patient SSN</TableCell>
 										<TableCell>Is finished</TableCell>
 										<TableCell>Create date</TableCell>
 										<TableCell>Update date</TableCell>
@@ -190,7 +190,7 @@ export default function AdminDoctorProfile() {
 													View diagnosis
 												</Button>
 											</TableCell>
-											<TableCell>{diagnosis.patient.SSID}</TableCell>
+											<TableCell>{diagnosis.patient.SSN}</TableCell>
 											<TableCell>
 												{diagnosis.isFinished ? "Yes" : "No"}
 											</TableCell>
