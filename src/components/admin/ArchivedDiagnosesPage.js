@@ -23,13 +23,31 @@ import SearchIcon from "@material-ui/icons/Search";
 import adminAPI from "../../api/admin.api";
 
 const useStyles = makeStyles({
+	background: {
+		background: "#707690",
+		position: "absolute",
+		width: "100%",
+		height: "100vh",
+		zIndex: "-1",
+		top: 0,
+	},
+	searchDiv: {
+		display: "flex",
+		justifyContent: "space-between",
+		height: "70px",
+		alignItems: "center",
+		margin: "10px 10px 40px",
+	},
 	search: {
 		width: "300px",
+		background: "#e0e0e0",
+		borderRadius: "3px",
 	},
 	finished: {
 		height: "58px",
 		marginLeft: "10px",
 		width: "280px",
+		color: "#e0e0e0",
 	},
 	searchBtn: {
 		height: "58px",
@@ -40,6 +58,15 @@ const useStyles = makeStyles({
 		height: "58px",
 		marginLeft: "10px",
 		width: "160px",
+	},
+	title: {
+		background: "#e0e0e0",
+		width: "250px",
+		borderRadius: "5px",
+		height: "80%",
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
 	},
 });
 
@@ -81,8 +108,7 @@ export default function ArchivedDiagnosesPage() {
 
 	const handleChangePage = (e, newPage) => {
 		setPage(newPage);
-		// isSearching ? search(newPage * 10) : getDoctors(newPage * 10);
-		getDiagnoses(newPage * 10);
+		isSearching ? search(newPage * 10) : getDiagnoses(newPage * 10);
 	};
 
 	const onProfessionSearchChange = (e) => {
@@ -167,8 +193,9 @@ export default function ArchivedDiagnosesPage() {
 	const emptyRows = 10 - Math.min(10, count - page * 10);
 
 	return (
-		<>
-			<Paper>
+		<div>
+			<div className={classes.background}></div>
+			<div className={classes.searchDiv}>
 				<div>
 					<TextField
 						variant="filled"
@@ -219,6 +246,12 @@ export default function ArchivedDiagnosesPage() {
 					</Menu>
 				</div>
 
+				<div className={classes.title}>
+					<h2>Archived Diagnoses</h2>
+				</div>
+			</div>
+
+			<Paper>
 				<TableContainer component={Paper}>
 					<Table className={classes.table} aria-label="simple table">
 						<TableHead>
@@ -327,6 +360,6 @@ export default function ArchivedDiagnosesPage() {
 					</Button>
 				</DialogActions>
 			</Dialog>
-		</>
+		</div>
 	);
 }

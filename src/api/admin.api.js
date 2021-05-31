@@ -69,17 +69,19 @@ class adminAPI {
 		}).catch((e) => console.log("error: ", e.response));
 	}
 
-	getDoctor(id) {
-		return API.get("/admins/getDoctor/" + id).catch((e) => {
+	getDoctor(id, skip) {
+		return API.get(`/admins/getDoctor/${id}?skip=${skip}`).catch((e) => {
 			console.log("error: ", e.response);
 			return e.response.status;
 		});
 	}
 
-	getDoctorImage(id) {
-		return API.get("/admins/getDoctorImage/" + id).catch((e) => {
-			console.log("error: ", e.response);
-			return e.response.status;
+	searchDoctorDiagnoses(id, patient, finished, skip) {
+		return API.post(`/admins/searchDoctorDiagnoses/${id}?skip=${skip}`, {
+			patient,
+			finished,
+		}).catch((e) => {
+			console.log(e.response);
 		});
 	}
 
@@ -113,10 +115,19 @@ class adminAPI {
 		}).catch((e) => console.log("error: ", e.response));
 	}
 
-	getArchivedDoctor(id) {
-		return API.get("/archives/getDoctor/" + id).catch((e) => {
+	getArchivedDoctor(id, skip) {
+		return API.get(`/archives/getDoctor/${id}?skip=${skip}`).catch((e) => {
 			console.log("error: ", e.response);
 			return e.response.status;
+		});
+	}
+
+	searchArchivedDoctorDiagnoses(id, patient, finished, skip) {
+		return API.post(`/archives/searchDoctorDiagnoses/${id}?skip=${skip}`, {
+			patient,
+			finished,
+		}).catch((e) => {
+			console.log(e.response);
 		});
 	}
 

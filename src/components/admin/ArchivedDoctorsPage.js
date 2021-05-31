@@ -13,16 +13,50 @@ import { Button, TablePagination, TextField } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 
 const useStyles = makeStyles({
+	background: {
+		background: "#707690",
+		position: "absolute",
+		width: "100%",
+		height: "100vh",
+		zIndex: "-1",
+		top: 0,
+	},
 	table: {
 		minWidth: 650,
+	},
+	header: {
+		fontWeight: "bold",
+		fontSize: "15px",
 	},
 	button: {
 		width: "16%",
 	},
-	hover: {
+	row: {
 		cursor: "pointer",
+		"&:nth-of-type(odd)": {
+			background: "lightgray",
+		},
+		"&:hover": {
+			background: "gray !important",
+		},
+	},
+	title: {
+		background: "#e0e0e0",
+		width: "300px",
+		borderRadius: "5px",
+		height: "80%",
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
 	},
 	flex: {
+		display: "flex",
+		height: "70px",
+		alignItems: "center",
+		justifyContent: "space-between",
+		margin: "10px 8px 40px 10px",
+	},
+	flexDiv: {
 		display: "flex",
 		height: "70px",
 		alignItems: "center",
@@ -31,11 +65,13 @@ const useStyles = makeStyles({
 		margin: "5px",
 		marginRight: 0,
 		width: "400px",
+		background: "#e0e0e0",
+		borderRadius: "3px",
 	},
 	searchBtn: {
 		width: "150px",
 		height: "78%",
-		marginLeft: "20px",
+		marginLeft: "5px",
 	},
 });
 
@@ -118,48 +154,63 @@ export default function BasicTable() {
 		getDoctors(0);
 	};
 
+	const emptyRows = 10 - Math.min(10, count - page * 10);
+
 	return (
 		<div>
+			<div className={classes.background}></div>
+
 			<div className={classes.flex}>
-				<TextField
-					className={classes.search}
-					variant="filled"
-					label="Search by name, surname"
-					value={nameSearch}
-					onChange={onNameSearchChange}
-				/>
-				<TextField
-					className={classes.search}
-					variant="filled"
-					label="Search by profession"
-					value={professionSearch}
-					onChange={onProfessionSearchChange}
-				/>
-				<Button
-					variant="contained"
-					className={classes.searchBtn}
-					startIcon={<SearchIcon />}
-					onClick={() => search(0)}
-				>
-					Search
-				</Button>
-				<Button
-					variant="contained"
-					className={classes.searchBtn}
-					onClick={clearSearch}
-				>
-					Clear search
-				</Button>
+				<div className={classes.flexDiv}>
+					<TextField
+						className={classes.search}
+						variant="filled"
+						label="Search by name, surname"
+						value={nameSearch}
+						onChange={onNameSearchChange}
+					/>
+					<TextField
+						className={classes.search}
+						variant="filled"
+						label="Search by profession"
+						value={professionSearch}
+						onChange={onProfessionSearchChange}
+					/>
+					<Button
+						variant="contained"
+						className={classes.searchBtn}
+						startIcon={<SearchIcon />}
+						onClick={() => search(0)}
+					>
+						Search
+					</Button>
+					<Button
+						variant="contained"
+						className={classes.searchBtn}
+						onClick={clearSearch}
+					>
+						Clear search
+					</Button>
+				</div>
+
+				<div className={classes.title}>
+					<h2>Archived Doctors Page</h2>
+				</div>
 			</div>
+
 			<Paper>
 				<TableContainer component={Paper}>
 					<Table className={classes.table} aria-label="simple table">
 						<TableHead>
 							<TableRow>
-								<TableCell>Doctor Full Name</TableCell>
-								<TableCell>Doctor Email</TableCell>
-								<TableCell>Doctor profession</TableCell>
-								<TableCell>Deleted at</TableCell>
+								<TableCell className={classes.header}>
+									Doctor Full Name
+								</TableCell>
+								<TableCell className={classes.header}>Doctor Email</TableCell>
+								<TableCell className={classes.header}>
+									Doctor profession
+								</TableCell>
+								<TableCell className={classes.header}>Deleted at</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -167,7 +218,7 @@ export default function BasicTable() {
 								<TableRow
 									key={doctor._id}
 									hover
-									className={classes.hover}
+									className={classes.row}
 									onClick={() => openDoctor(doctor._id)}
 								>
 									<TableCell component="th" scope="row">
@@ -178,6 +229,12 @@ export default function BasicTable() {
 									<TableCell>{doctor.deletedAt}</TableCell>
 								</TableRow>
 							))}
+
+							{emptyRows > 0 && (
+								<TableRow style={{ height: 53 * emptyRows }}>
+									<TableCell colSpan={6} />
+								</TableRow>
+							)}
 						</TableBody>
 					</Table>
 				</TableContainer>

@@ -11,6 +11,8 @@ import {
 	FormControlLabel,
 	FormLabel,
 	makeStyles,
+	Menu,
+	MenuItem,
 	Paper,
 	Radio,
 	RadioGroup,
@@ -19,9 +21,11 @@ import {
 	TableCell,
 	TableContainer,
 	TableHead,
+	TablePagination,
 	TableRow,
 	TextField,
 } from "@material-ui/core";
+import SearchIcon from "@material-ui/icons/Search";
 
 const useStyles = makeStyles({
 	btn: {
@@ -32,9 +36,6 @@ const useStyles = makeStyles({
 		textAlign: "center",
 	},
 	container: {
-		// display: "flex",
-		// alignItems: "center",
-		// justifyContent: "space-between",
 		display: "grid",
 		gridTemplateColumns: "4fr 1fr 5fr",
 		alignItems: "center",
@@ -54,15 +55,40 @@ const useStyles = makeStyles({
 		textAlign: "center",
 		padding: "20px",
 	},
-	warningTable: {
-		height: "100%",
+	warningContainer: {
 		width: "90%",
 		margin: "auto",
-		border: "1px solid black",
+		height: "96%",
+		boxShadow: "2px 2px 5px",
 	},
 	radio: {
 		marginTop: "30px",
 		marginBottom: "10px",
+	},
+	diagnoses: {
+		marginTop: "50px",
+	},
+	search: {
+		width: "450px",
+	},
+	finished: {
+		height: "58px",
+		marginLeft: "10px",
+		width: "280px",
+	},
+	searchBtn: {
+		height: "58px",
+		marginLeft: "10px",
+		width: "130px",
+	},
+	clearBtn: {
+		height: "58px",
+		marginLeft: "10px",
+		width: "160px",
+	},
+	noWarnings: {
+		textAlign: "center",
+		fontSize: "18px",
 	},
 });
 
@@ -79,10 +105,32 @@ export default function AdminDoctorProfile() {
 	const [openDelete, setOpenDelete] = React.useState(false);
 	const [open, setOpen] = React.useState(false);
 	const [openedDiagnosis, setOpenedDiagnosis] = React.useState({});
+	const [pageWarning, setPageWarning] = React.useState(0);
+	const [countWarning, setCountWarning] = React.useState(0);
+	const [pageDiagnoses, setPageDiagnoses] = React.useState(0);
+	const [countDiagnoses, setCountDiagnoses] = React.useState(0);
+
+	const [patientSearch, setPatientSearch] = React.useState("");
+	const [finishedSearch, setFinishedSearch] = React.useState("All");
+	const [searchVal, setSearchVal] = React.useState({
+		patientSearch,
+		finishedSearch,
+	});
+	const [anchorEl, setAnchorEl] = React.useState(null);
+	const [isSearching, setIsSearching] = React.useState(false);
 
 	const { id } = useParams();
 	const history = useHistory();
 	const classes = useStyles();
+
+	const handleChangePageWarning = (e, newPage) => {
+		setPageWarning(newPage);
+	};
+
+	const handleChangePageDiagnoses = (e, newPage) => {
+		setPageDiagnoses(newPage);
+		isSearching ? search(newPage * 10) : getDoctor(newPage * 10);
+	};
 
 	const handleWarningOpen = () => {
 		setOpenWarning(true);
@@ -100,6 +148,15 @@ export default function AdminDoctorProfile() {
 		setOpenDelete(false);
 	};
 
+	const onPatientSearchChange = (e) => {
+		setPatientSearch(e.target.value);
+	};
+
+	const finished = (val) => {
+		setFinishedSearch(val);
+		handleCloseMenu();
+	};
+
 	const handleClickOpen = (index, id, isFinished) => {
 		setOpen(true);
 		setOpenedDiagnosis(diagnoses[index]);
@@ -113,6 +170,14 @@ export default function AdminDoctorProfile() {
 		setNewWarning({ ...newWarning, severity: e.target.value });
 	};
 
+	const handleClickMenu = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleCloseMenu = () => {
+		setAnchorEl(null);
+	};
+
 	const onWarningDetailsChange = (e) => {
 		setNewWarning({ ...newWarning, details: e.target.value });
 		setNewWarningError("");
@@ -124,23 +189,24 @@ export default function AdminDoctorProfile() {
 	};
 
 	// eslint-disable-next-line
-	useEffect(() => getDoctor(), []);
+	useEffect(() => getDoctor(0), []);
 
-	const getDoctor = () => {
-		adminAPI.getDoctor(id).then((res) => {
+	const getDoctor = (skip) => {
+		adminAPI.getDoctor(id, skip).then((res) => {
 			if (res === 404) return history.push("/admin/viewDoctors");
 
-			// console.log(res);
 			const date = res.data.doctor.createdAt.split("T")[0].split("-");
 			setDate(date[2] + "/" + date[1] + "/" + date[0]);
 
 			setDoctor(res.data.doctor);
+			setCountDiagnoses(res.data.count);
 
 			res.data.doctor.warnings.forEach((warning) => {
 				const date = warning.date.split("T")[0].split("-");
 				warning.date = date[2] + "/" + date[1] + "/" + date[0];
 			});
 			setWarnings(res.data.doctor.warnings);
+			setCountWarning(res.data.doctor.warnings.length);
 
 			res.data.diagnoses.forEach((diagnosis) => {
 				diagnosis.createdAt = timeFormat(diagnosis.createdAt);
@@ -184,8 +250,47 @@ export default function AdminDoctorProfile() {
 		}
 	};
 
-	// const emptyRowsWarning = 5 - Math.min(5, count - page * 5);
-	const emptyRowsWarning = 5 - 2;
+	const search = (skip, btn = false) => {
+		if (btn) {
+			setPageDiagnoses(0);
+			setSearchVal({ patientSearch, finishedSearch });
+		} else {
+			searchFunc(skip);
+		}
+	};
+
+	// eslint-disable-next-line
+	useEffect(() => searchFunc(0), [searchVal]);
+
+	const searchFunc = (skip) => {
+		setIsSearching(true);
+
+		adminAPI
+			.searchDoctorDiagnoses(
+				id,
+				searchVal.patientSearch,
+				searchVal.finishedSearch,
+				skip
+			)
+			.then((res) => {
+				res.data.diagnoses.forEach((item) => {
+					item.createdAt = timeFormat(item.createdAt);
+					item.updatedAt = timeFormat(item.updatedAt);
+				});
+				setDiagnoses(res.data.diagnoses);
+				setCountDiagnoses(res.data.count);
+			});
+	};
+
+	const clearSearch = () => {
+		getDoctor(0);
+		setIsSearching(false);
+		setPageDiagnoses(0);
+	};
+
+	const emptyRowsWarning = 5 - Math.min(5, countWarning - pageWarning * 5);
+	const emptyRowsDiagnoses =
+		10 - Math.min(10, countDiagnoses - pageDiagnoses * 10);
 
 	return (
 		<>
@@ -231,7 +336,8 @@ export default function AdminDoctorProfile() {
 						</Button>
 					</div>
 
-					<TableContainer>
+					{/* 	WARNINGS TABLE	 */}
+					<TableContainer className={classes.warningContainer}>
 						<Table className={classes.warningTable} aria-label="simple table">
 							<TableHead>
 								<TableRow>
@@ -241,20 +347,38 @@ export default function AdminDoctorProfile() {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{warnings.map((warning, index) => (
-									<TableRow key={warning._id}>
-										<TableCell>{warning.details}</TableCell>
-										<TableCell>{warning.severity}</TableCell>
-										<TableCell>{warning.date}</TableCell>
-									</TableRow>
-								))}
-								{emptyRowsWarning > 0 && (
+								{warnings
+									.slice(pageWarning * 5, 5 + pageWarning * 5)
+									.map((warning, index) => (
+										<TableRow key={warning._id}>
+											<TableCell>{warning.details}</TableCell>
+											<TableCell>{warning.severity}</TableCell>
+											<TableCell>{warning.date}</TableCell>
+										</TableRow>
+									))}
+								{warnings.length === 0 ? (
 									<TableRow style={{ height: 53 * emptyRowsWarning }}>
-										<TableCell colSpan={6} />
+										<TableCell colSpan={3} className={classes.noWarnings}>
+											The doctor has not received any warnings
+										</TableCell>
 									</TableRow>
+								) : (
+									emptyRowsWarning > 0 && (
+										<TableRow style={{ height: 53 * emptyRowsWarning }}>
+											<TableCell colSpan={6} />
+										</TableRow>
+									)
 								)}
 							</TableBody>
 						</Table>
+						<TablePagination
+							component="div"
+							rowsPerPageOptions={[5]}
+							onChangePage={handleChangePageWarning}
+							count={countWarning}
+							page={pageWarning}
+							rowsPerPage={5}
+						/>
 					</TableContainer>
 				</div>
 
@@ -269,55 +393,116 @@ export default function AdminDoctorProfile() {
 					))}
 				</div> */}
 
+				{/* 	Diagnoses table		 */}
+				<h2>Diagnoses written by this doctor</h2>
+
 				<div>
-					{diagnoses.length === 0 ? (
-						<h1>The doctor has not written any diagnoses</h1>
-					) : (
-						<TableContainer component={Paper}>
-							<Table className={classes.table} aria-label="simple table">
-								<TableHead>
-									<TableRow>
-										<TableCell>Patient full name</TableCell>
-										<TableCell>Diagnosis</TableCell>
-										<TableCell>Patient SSN</TableCell>
-										<TableCell>Is finished</TableCell>
-										<TableCell>Create date</TableCell>
-										<TableCell>Update date</TableCell>
+					<TextField
+						variant="filled"
+						label="Search by patient name, surname and father name"
+						className={classes.search}
+						value={patientSearch}
+						onChange={onPatientSearchChange}
+					/>
+					<Button
+						aria-controls="simple-menu"
+						aria-haspopup="true"
+						onClick={handleClickMenu}
+						variant="outlined"
+						className={classes.finished}
+					>
+						Show diagnoses - {finishedSearch}
+					</Button>
+					<Button
+						startIcon={<SearchIcon />}
+						variant="contained"
+						color="primary"
+						className={classes.searchBtn}
+						onClick={() => search(0, true)}
+					>
+						Search
+					</Button>
+					<Button
+						variant="contained"
+						className={classes.clearBtn}
+						onClick={clearSearch}
+					>
+						Clear search
+					</Button>
+					<Menu
+						id="simple-menu"
+						anchorEl={anchorEl}
+						keepMounted
+						open={Boolean(anchorEl)}
+						onClose={handleCloseMenu}
+					>
+						<MenuItem onClick={() => finished("All")}>Show all</MenuItem>
+						<MenuItem onClick={() => finished("Finished")}>
+							Show finished
+						</MenuItem>
+						<MenuItem onClick={() => finished("Unfinished")}>
+							Show unfinished
+						</MenuItem>
+					</Menu>
+				</div>
+
+				<div className={classes.diagnoses}>
+					<TableContainer component={Paper}>
+						<Table className={classes.table} aria-label="simple table">
+							<TableHead>
+								<TableRow>
+									<TableCell>Patient full name</TableCell>
+									<TableCell>Diagnosis</TableCell>
+									<TableCell>Patient SSN</TableCell>
+									<TableCell>Is finished</TableCell>
+									<TableCell>Create date</TableCell>
+									<TableCell>Update date</TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{diagnoses.map((diagnosis, index) => (
+									<TableRow key={diagnosis._id}>
+										<TableCell scope="row">
+											{diagnosis.patient.name} {diagnosis.patient.surname}{" "}
+											{diagnosis.patient.fatherName}
+										</TableCell>
+										<TableCell>
+											<Button
+												variant="outlined"
+												onClick={() =>
+													handleClickOpen(
+														index,
+														diagnosis.doctor._id,
+														diagnosis.isFinished
+													)
+												}
+											>
+												View diagnosis
+											</Button>
+										</TableCell>
+										<TableCell>{diagnosis.patient.SSN}</TableCell>
+										<TableCell>{diagnosis.isFinished ? "Yes" : "No"}</TableCell>
+										<TableCell>{diagnosis.createdAt}</TableCell>
+										<TableCell>{diagnosis.updatedAt}</TableCell>
 									</TableRow>
-								</TableHead>
-								<TableBody>
-									{diagnoses.map((diagnosis, index) => (
-										<TableRow key={diagnosis._id}>
-											<TableCell scope="row">
-												{diagnosis.patient.name} {diagnosis.patient.surname}{" "}
-												{diagnosis.patient.fatherName}
-											</TableCell>
-											<TableCell>
-												<Button
-													variant="outlined"
-													onClick={() =>
-														handleClickOpen(
-															index,
-															diagnosis.doctor._id,
-															diagnosis.isFinished
-														)
-													}
-												>
-													View diagnosis
-												</Button>
-											</TableCell>
-											<TableCell>{diagnosis.patient.SSN}</TableCell>
-											<TableCell>
-												{diagnosis.isFinished ? "Yes" : "No"}
-											</TableCell>
-											<TableCell>{diagnosis.createdAt}</TableCell>
-											<TableCell>{diagnosis.updatedAt}</TableCell>
-										</TableRow>
-									))}
-								</TableBody>
-							</Table>
-						</TableContainer>
-					)}
+								))}
+
+								{emptyRowsDiagnoses > 0 && (
+									<TableRow style={{ height: 53 * emptyRowsDiagnoses }}>
+										<TableCell colSpan={6} />
+									</TableRow>
+								)}
+							</TableBody>
+						</Table>
+					</TableContainer>
+					<TablePagination
+						component="div"
+						rowsPerPageOptions={[10]}
+						onChangePage={handleChangePageDiagnoses}
+						count={countDiagnoses}
+						page={pageDiagnoses}
+						rowsPerPage={10}
+					/>
 				</div>
 			</div>
 

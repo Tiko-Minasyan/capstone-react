@@ -16,23 +16,18 @@ import { TablePagination } from "@material-ui/core";
 
 const useStyles = makeStyles({
 	background: {
-		background: "#6f7fdc",
+		background: "#707690",
 		position: "absolute",
 		width: "100%",
 		height: "100vh",
 		zIndex: "-1",
+		top: 0,
 	},
 	table: {
 		minWidth: 650,
 	},
 	button: {
 		width: "16%",
-	},
-	flex: {
-		display: "flex",
-		justifyContent: "flex-end",
-		padding: "10px 10px",
-		alignItems: "center",
 	},
 	title: {
 		background: "#e0e0e0",
@@ -48,6 +43,7 @@ const useStyles = makeStyles({
 		justifyContent: "space-between",
 		height: "70px",
 		alignItems: "center",
+		margin: "10px 5px 40px",
 	},
 	search: {
 		width: "400px",

@@ -154,7 +154,7 @@ export default function SignIn() {
 						>
 							Sign In
 						</Button>
-						<Link to="/admin" variant="body2">
+						<Link to="/forgotPassword" variant="body2">
 							Forgot password?
 						</Link>
 					</form>

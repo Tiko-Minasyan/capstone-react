@@ -6,8 +6,10 @@ import {
 } from "react-router-dom";
 import { setAuthToken } from "./axios";
 
-import Header from "./components/Header";
 import LoginPage from "./components/LoginPage";
+import ForgotPassword from "./components/ForgotPassword";
+
+import Header from "./components/Header";
 import ProfilePage from "./components/ProfilePage";
 import EditPage from "./components/EditPage";
 import EditImagePage from "./components/EditImagePage";
@@ -37,6 +39,9 @@ function App() {
 			<Switch>
 				<Route path="/" exact>
 					<LoginPage />
+				</Route>
+				<Route path="/forgotPassword">
+					<ForgotPassword />
 				</Route>
 				<Route path="/profile" exact>
 					<Header />
