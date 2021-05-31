@@ -2,6 +2,10 @@ import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
+import Drawer from "@material-ui/core/Drawer";
+import List from "@material-ui/core/List";
+import Divider from "@material-ui/core/Divider";
+import ListItem from "@material-ui/core/ListItem";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
@@ -10,6 +14,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import { useHistory } from "react-router";
 import adminAPI from "../../api/admin.api";
+import { ListItemText } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -27,15 +32,17 @@ const useStyles = makeStyles((theme) => ({
 	name: {
 		marginRight: "10px",
 	},
+	drawer: {
+		width: "250px",
+	},
 }));
 
 export default function Header() {
 	const [admin, setAdmin] = React.useState({});
 	const [anchorEl, setAnchorEl] = React.useState(null);
-	const [anchorElLinks, setAnchorElLinks] = React.useState(null);
+	const [drawerOpen, setDrawerOpen] = React.useState(false);
 
 	const open = Boolean(anchorEl);
-	const openLinks = Boolean(anchorElLinks);
 
 	const classes = useStyles();
 	const history = useHistory();
@@ -50,45 +57,35 @@ export default function Header() {
 		setAnchorEl(event.currentTarget);
 	};
 
-	const handleMenuLinks = (event) => {
-		setAnchorElLinks(event.currentTarget);
+	const toggleDrawer = (open) => (event) => {
+		setDrawerOpen(open);
 	};
 
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
 
-	const handleCloseLinks = () => {
-		setAnchorElLinks(null);
-	};
-
 	const allDoctors = () => {
-		handleCloseLinks();
 		history.push("/admin/viewDoctors");
 	};
 
 	const newDoctor = () => {
-		handleCloseLinks();
 		history.push("/admin/register");
 	};
 
 	const newAdmin = () => {
-		handleCloseLinks();
 		history.push("/admin/registerAdmin");
 	};
 
 	const archivedDoctors = () => {
-		handleCloseLinks();
 		history.push("/admin/archive/doctors");
 	};
 
 	const archivedPatients = () => {
-		handleCloseLinks();
 		history.push("/admin/archive/patients");
 	};
 
 	const archivedDiagnoses = () => {
-		handleCloseLinks();
 		history.push("/admin/archive/diagnoses");
 	};
 
@@ -112,36 +109,44 @@ export default function Header() {
 						className={classes.menuButton}
 						color="inherit"
 						aria-label="menu"
-						onClick={handleMenuLinks}
+						onClick={toggleDrawer(true)}
 					>
 						<MenuIcon />
 					</IconButton>
-					<Menu
-						id="menu-appbar-links"
-						anchorEl={anchorElLinks}
-						anchorOrigin={{
-							vertical: "top",
-							horizontal: "right",
-						}}
-						keepMounted
-						transformOrigin={{
-							vertical: "top",
-							horizontal: "right",
-						}}
-						open={openLinks}
-						onClose={handleCloseLinks}
+
+					<Drawer
+						anchor="left"
+						open={drawerOpen}
+						onClose={toggleDrawer(false)}
+						onClick={toggleDrawer(false)}
 					>
-						<MenuItem onClick={allDoctors}>See All Doctors</MenuItem>
-						<MenuItem onClick={newDoctor}>Add a New Doctor</MenuItem>
-						<MenuItem onClick={newAdmin}>Add a New Admin</MenuItem> <hr />
-						<MenuItem onClick={archivedDoctors}>View Archived Doctors</MenuItem>
-						<MenuItem onClick={archivedPatients}>
-							View Archived Patients
-						</MenuItem>
-						<MenuItem onClick={archivedDiagnoses}>
-							View Archived Diagnoses
-						</MenuItem>
-					</Menu>
+						<div className={classes.drawer}>
+							<List>
+								<ListItem button onClick={allDoctors}>
+									<ListItemText primary="See All Doctors" />
+								</ListItem>
+								<ListItem button onClick={newDoctor}>
+									<ListItemText primary="Add a New Doctors" />
+								</ListItem>
+								<ListItem button onClick={newAdmin}>
+									<ListItemText primary="Add a New Admin" />
+								</ListItem>
+							</List>
+							<Divider />
+							<List>
+								<ListItem button onClick={archivedDoctors}>
+									<ListItemText primary="View Archived Doctors" />
+								</ListItem>
+								<ListItem button onClick={archivedPatients}>
+									<ListItemText primary="View Archived Patients" />
+								</ListItem>
+								<ListItem button onClick={archivedDiagnoses}>
+									<ListItemText primary="View Archived Diagnoses" />
+								</ListItem>
+							</List>
+						</div>
+					</Drawer>
+
 					<Typography variant="h6" className={classes.title}>
 						<span className={classes.pointer} onClick={allDoctors}>
 							Medical Center Application

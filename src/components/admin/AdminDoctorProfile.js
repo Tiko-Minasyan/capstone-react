@@ -54,6 +54,7 @@ const useStyles = makeStyles({
 	info: {
 		textAlign: "center",
 		padding: "20px",
+		width: "100%",
 	},
 	warningContainer: {
 		width: "90%",
@@ -286,6 +287,9 @@ export default function AdminDoctorProfile() {
 		getDoctor(0);
 		setIsSearching(false);
 		setPageDiagnoses(0);
+
+		setPatientSearch("");
+		setFinishedSearch("All");
 	};
 
 	const emptyRowsWarning = 5 - Math.min(5, countWarning - pageWarning * 5);

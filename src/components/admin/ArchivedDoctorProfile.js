@@ -29,22 +29,24 @@ const useStyles = makeStyles({
 		marginRight: "20px",
 	},
 	container: {
-		display: "flex",
-		justifyContent: "space-between",
+		display: "grid",
 		alignItems: "center",
+		gridTemplateColumns: "3fr 5fr",
+		gridGap: "15%",
 	},
 	doctorContainer: {
 		display: "flex",
 		alignItems: "center",
 		margin: "10px",
 		padding: "20px",
+		textAlign: "center",
 	},
 	image: {
 		width: "240px",
 		height: "300px",
 	},
 	info: {
-		width: "400px",
+		width: "100%",
 		textAlign: "center",
 	},
 	radio: {
@@ -69,6 +71,16 @@ const useStyles = makeStyles({
 		marginLeft: "10px",
 		width: "160px",
 	},
+	warningContainer: {
+		width: "90%",
+		marginLeft: "auto",
+		marginRight: "15px",
+		boxShadow: "2px 2px 5px",
+	},
+	noWarnings: {
+		textAlign: "center",
+		fontSize: "18px",
+	},
 });
 
 export default function AdminDoctorProfile() {
@@ -78,6 +90,8 @@ export default function AdminDoctorProfile() {
 	const [open, setOpen] = React.useState(false);
 	const [openedDiagnosis, setOpenedDiagnosis] = React.useState({});
 
+	const [pageWarning, setPageWarning] = React.useState(0);
+	const [countWarning, setCountWarning] = React.useState(0);
 	const [pageDiagnoses, setPageDiagnoses] = React.useState(0);
 	const [countDiagnoses, setCountDiagnoses] = React.useState(0);
 
@@ -93,6 +107,10 @@ export default function AdminDoctorProfile() {
 	const { id } = useParams();
 	const history = useHistory();
 	const classes = useStyles();
+
+	const handleChangePageWarning = (e, newPage) => {
+		setPageWarning(newPage);
+	};
 
 	const handleClickOpen = (index) => {
 		setOpen(true);
@@ -146,6 +164,7 @@ export default function AdminDoctorProfile() {
 				warning.date = date[2] + "/" + date[1] + "/" + date[0];
 			});
 			setWarnings(res.data.doctor.warnings);
+			setCountWarning(res.data.doctor.warnings.length);
 
 			res.data.diagnoses.forEach((diagnosis) => {
 				diagnosis.createdAt = timeFormat(diagnosis.createdAt);
@@ -209,6 +228,7 @@ export default function AdminDoctorProfile() {
 		setPageDiagnoses(0);
 	};
 
+	const emptyRowsWarning = 5 - Math.min(5, countWarning - pageWarning * 5);
 	const emptyRowsDiagnoses =
 		10 - Math.min(10, countDiagnoses - pageDiagnoses * 10);
 
@@ -219,28 +239,70 @@ export default function AdminDoctorProfile() {
 			</Button>
 			<div>
 				<div className={classes.container}>
-					<div className={classes.doctorContainer}>
-						<Paper className={classes.doctorContainer} elevation={5}>
-							<div className={classes.info}>
-								<h1>
-									{doctor.name} {doctor.surname}
-								</h1>
-								<h2>{doctor.profession}</h2>
-								<p>
-									Phone number: {doctor.phone ? doctor.phone : "Not registered"}
-								</p>
-								<p>
-									Address: {doctor.address ? doctor.address : "Not registered"}
-								</p>
-								<p>Created at: {doctor.createdAt}</p>
-								<p>Deleted at: {doctor.deletedAt}</p>
-								<p>Delete reason: {doctor.deleteReason}</p>
-							</div>
-						</Paper>
-					</div>
+					<Paper className={classes.doctorContainer} elevation={5}>
+						<div className={classes.info}>
+							<h1>
+								{doctor.name} {doctor.surname}
+							</h1>
+							<h2>{doctor.profession}</h2>
+							<p>
+								Phone number: {doctor.phone ? doctor.phone : "Not registered"}
+							</p>
+							<p>
+								Address: {doctor.address ? doctor.address : "Not registered"}
+							</p>
+							<p>Created at: {doctor.createdAt}</p>
+							<p>Deleted at: {doctor.deletedAt}</p>
+							<p>Delete reason: {doctor.deleteReason}</p>
+						</div>
+					</Paper>
+
+					<TableContainer className={classes.warningContainer}>
+						<Table className={classes.warningTable} aria-label="simple table">
+							<TableHead>
+								<TableRow>
+									<TableCell>Warning details</TableCell>
+									<TableCell>Severity</TableCell>
+									<TableCell>Issued at</TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{warnings
+									.slice(pageWarning * 5, 5 + pageWarning * 5)
+									.map((warning, index) => (
+										<TableRow key={warning._id}>
+											<TableCell>{warning.details}</TableCell>
+											<TableCell>{warning.severity}</TableCell>
+											<TableCell>{warning.date}</TableCell>
+										</TableRow>
+									))}
+								{warnings.length === 0 ? (
+									<TableRow style={{ height: 53 * emptyRowsWarning }}>
+										<TableCell colSpan={3} className={classes.noWarnings}>
+											The doctor has not received any warnings
+										</TableCell>
+									</TableRow>
+								) : (
+									emptyRowsWarning > 0 && (
+										<TableRow style={{ height: 53 * emptyRowsWarning }}>
+											<TableCell colSpan={6} />
+										</TableRow>
+									)
+								)}
+							</TableBody>
+						</Table>
+						<TablePagination
+							component="div"
+							rowsPerPageOptions={[5]}
+							onChangePage={handleChangePageWarning}
+							count={countWarning}
+							page={pageWarning}
+							rowsPerPage={5}
+						/>
+					</TableContainer>
 				</div>
 
-				<div>
+				{/* <div>
 					{warnings.length === 0 && <h1>The doctor had no warnings</h1>}
 					{warnings.map((warning) => (
 						<div>
@@ -249,7 +311,7 @@ export default function AdminDoctorProfile() {
 							<h3>Written at: {warning.date}</h3>
 						</div>
 					))}
-				</div>
+				</div> */}
 
 				{/* 	Diagnoses table		 */}
 				<h2>Diagnoses written by this doctor</h2>

@@ -104,7 +104,7 @@ export default function AdminSignIn() {
 	return (
 		<div className={classes.flex}>
 			<Paper className={classes.container} elevation={5}>
-				<Container component="Paperr" maxWidth="xs">
+				<Container component="main" maxWidth="xs">
 					<CssBaseline />
 					<div className={classes.paper}>
 						<Typography component="h1" variant="h5">

@@ -146,8 +146,6 @@ export default function ArchivedDiagnosesPage() {
 				if (item.patient === null) item.patient = { ...item.archivedPatient };
 			});
 
-			console.log(res.data);
-
 			setDiagnoses(res.data.diagnoses);
 			setCount(res.data.count);
 		});
