@@ -34,6 +34,9 @@ const useStyles = makeStyles((theme) => ({
 	},
 	drawer: {
 		width: "250px",
+		background: "#3f51b5",
+		color: "#e0e0e0",
+		height: "100%",
 	},
 }));
 

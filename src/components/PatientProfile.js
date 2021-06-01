@@ -8,13 +8,23 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import "date-fns";
-import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import patientAPI from "../api/patient.api";
 import Diagnoses from "./Diagnoses";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Paper } from "@material-ui/core";
 
 const useStyles = makeStyles({
+	patientContainer: {
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "space-between",
+	},
+	container: {
+		width: "600px",
+		textAlign: "center",
+		padding: "10px",
+		margin: "10px",
+	},
 	flex: {
 		display: "flex",
 		justifyContent: "space-between",
@@ -133,42 +143,46 @@ export default function PatientProfile() {
 
 	return (
 		<div>
-			<div>
-				<h1>
-					<IconButton onClick={back}>
-						<ArrowBackIcon />
-					</IconButton>
-					{patient.name} {patient.surname} {patient.fatherName}
-				</h1>
-				<div className={classes.flex}>
+			<Button onClick={back} startIcon={<ArrowBackIcon />}>
+				Back to patients page
+			</Button>
+			<div className={classes.patientContainer}>
+				<Paper elevation={4} className={classes.container}>
+					<h3>
+						Patient full name: {patient.name} {patient.surname}{" "}
+						{patient.fatherName}
+					</h3>
 					<p>
-						Birthday: {birthday}, age: {getAge()}
+						Birth date: {birthday}, age: {getAge()}
 					</p>
-					<div>
-						<Button
-							variant="contained"
-							color="primary"
-							onClick={handleEditOpen}
-							className={classes.btn}
-						>
-							Edit patient
-						</Button>{" "}
-						<Button
-							variant="contained"
-							color="secondary"
-							onClick={handleDeleteOpen}
-							className={classes.btn}
-						>
-							Delete patient
-						</Button>
-					</div>
+
+					<p>
+						Phone number: {patient.phone ? patient.phone : "Not registered"}
+					</p>
+					<p>Address: {patient.address}</p>
+					<p>Passport / ID card number: {patient.passportID}</p>
+					<p>SSN: {patient.SSN}</p>
+				</Paper>
+				<div>
+					<Button
+						variant="contained"
+						color="primary"
+						onClick={handleEditOpen}
+						className={classes.btn}
+					>
+						Edit patient
+					</Button>{" "}
+					<Button
+						variant="contained"
+						color="secondary"
+						onClick={handleDeleteOpen}
+						className={classes.btn}
+					>
+						Delete patient
+					</Button>
 				</div>
-				<p>Phone number: {patient.phone ? patient.phone : "Not registered"}</p>
-				<p>Address: {patient.address}</p>
-				<p>Passport / ID card number: {patient.passportID}</p>
-				<p>SSN: {patient.SSN}</p>
-				<Diagnoses />
 			</div>
+			<Diagnoses />
 
 			<div>
 				<Dialog

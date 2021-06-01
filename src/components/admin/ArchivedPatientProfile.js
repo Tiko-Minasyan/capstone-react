@@ -1,20 +1,17 @@
 import React, { useEffect } from "react";
 import { useHistory, useParams } from "react-router";
-import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import adminAPI from "../../api/admin.api";
 import ArchivedDiagnoses from "./ArchivedDiagnoses";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Paper } from "@material-ui/core";
 
 const useStyles = makeStyles({
-	flex: {
-		display: "flex",
-		justifyContent: "space-between",
-		alignItems: "center",
-		height: "20px",
-	},
-	btn: {
-		marginRight: "20px",
+	container: {
+		width: "600px",
+		textAlign: "center",
+		padding: "10px",
+		margin: "10px",
 	},
 });
 
@@ -69,26 +66,25 @@ export default function PatientProfile() {
 
 	return (
 		<div>
-			<div>
-				<h1>
-					<IconButton onClick={back}>
-						<ArrowBackIcon />
-					</IconButton>
-					{patient.name} {patient.surname} {patient.fatherName}
-				</h1>
-				<div className={classes.flex}>
-					<p>
-						Birthday: {birthday}, age: {getAge()}
-					</p>
-				</div>
+			<Button onClick={back} startIcon={<ArrowBackIcon />}>
+				Back to patients archive page
+			</Button>
+			<Paper elevation={4} className={classes.container}>
+				<h3>
+					Patient full name: {patient.name} {patient.surname}{" "}
+					{patient.fatherName}
+				</h3>
+				<p>
+					Birth date: {birthday}, age: {getAge()}
+				</p>
 				<p>Phone number: {patient.phone ? patient.phone : "Not registered"}</p>
 				<p>Address: {patient.address}</p>
 				<p>Passport / ID card number: {patient.passportID}</p>
 				<p>SSN: {patient.SSN}</p>
 				<p>Delete reason: {patient.deleteReason}</p>
 				<p>Deleted at: {patient.deletedAt}</p>
-				<ArchivedDiagnoses />
-			</div>
+			</Paper>
+			<ArchivedDiagnoses />
 		</div>
 	);
 }

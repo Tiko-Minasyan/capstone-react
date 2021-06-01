@@ -240,6 +240,11 @@ export default function AdminDoctorProfile() {
 			<div>
 				<div className={classes.container}>
 					<Paper className={classes.doctorContainer} elevation={5}>
+						<img
+							src={`http://localhost:8000/images/${doctor.photo}`}
+							alt="Doctor"
+							className={classes.image}
+						/>
 						<div className={classes.info}>
 							<h1>
 								{doctor.name} {doctor.surname}

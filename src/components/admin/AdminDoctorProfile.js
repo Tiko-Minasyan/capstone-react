@@ -386,17 +386,6 @@ export default function AdminDoctorProfile() {
 					</TableContainer>
 				</div>
 
-				{/* <div>
-					{warnings.length === 0 && <h1>The doctor has no warnings</h1>}
-					{warnings.map((warning) => (
-						<div>
-							<h1>Warning text: {warning.details}</h1>
-							<h2>Warning severity: {warning.severity}</h2>
-							<h3>Written at: {warning.date}</h3>
-						</div>
-					))}
-				</div> */}
-
 				{/* 	Diagnoses table		 */}
 				<h2>Diagnoses written by this doctor</h2>
 

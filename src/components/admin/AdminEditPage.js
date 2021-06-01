@@ -3,13 +3,11 @@ import adminAPI from "../../api/admin.api";
 import {
 	Button,
 	Container,
-	Grid,
 	makeStyles,
 	TextField,
 	Typography,
 } from "@material-ui/core";
 import { useHistory } from "react-router";
-import { Link } from "react-router-dom";
 import { isEmail } from "validator";
 
 const useStyles = makeStyles((theme) => ({
@@ -187,18 +185,6 @@ export default function EditPage() {
 					>
 						Update account
 					</Button>
-					<Grid container>
-						<Grid item xs>
-							<Link to="/edit/image" variant="body2">
-								Edit profile picture
-							</Link>
-						</Grid>
-						<Grid item>
-							<Link to="/edit/password" variant="body2">
-								Edit password
-							</Link>
-						</Grid>
-					</Grid>
 				</form>
 			</div>
 		</Container>
