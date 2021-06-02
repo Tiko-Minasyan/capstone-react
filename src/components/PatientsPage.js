@@ -29,7 +29,7 @@ import { TablePagination } from "@material-ui/core";
 
 const useStyles = makeStyles({
 	background: {
-		background: "#6f7fdc",
+		background: "#707690",
 		position: "absolute",
 		width: "100%",
 		height: "100vh",
@@ -61,6 +61,8 @@ const useStyles = makeStyles({
 		justifyContent: "space-between",
 		height: "70px",
 		alignItems: "center",
+		marginLeft: "5px",
+		marginRight: "10px",
 	},
 	search: {
 		width: "400px",

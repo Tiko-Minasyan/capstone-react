@@ -68,6 +68,13 @@ const useStyles = makeStyles({
 		justifyContent: "center",
 		alignItems: "center",
 	},
+	header: {
+		fontWeight: "bold",
+		fontSize: "15px",
+	},
+	viewBtn: {
+		height: "25px",
+	},
 });
 
 export default function ArchivedDiagnosesPage() {
@@ -127,7 +134,15 @@ export default function ArchivedDiagnosesPage() {
 		const date = str.split("T")[0].split("-");
 		const time = str.split("T")[1].split(":");
 		return (
-			date[2] + "/" + date[1] + "/" + date[0] + " " + time[0] + ":" + time[1]
+			date[2] +
+			"/" +
+			date[1] +
+			"/" +
+			date[0] +
+			" " +
+			(parseInt(time[0]) + 4) +
+			":" +
+			time[1]
 		);
 	};
 
@@ -160,6 +175,9 @@ export default function ArchivedDiagnosesPage() {
 		}
 	};
 
+	// eslint-disable-next-line
+	useEffect(() => searchFunc(0), [searchVal]);
+
 	const searchFunc = (skip) => {
 		setIsSearching(true);
 
@@ -173,8 +191,10 @@ export default function ArchivedDiagnosesPage() {
 				res.data.diagnoses.forEach((item) => {
 					item.createdAt = timeFormat(item.createdAt);
 					item.updatedAt = timeFormat(item.updatedAt);
+					item.deletedAt = timeFormat(item.deletedAt);
 
 					if (item.doctor === null) item.doctor = { ...item.archivedDoctor };
+					if (item.patient === null) item.patient = { ...item.archivedPatient };
 				});
 
 				setDiagnoses(res.data.diagnoses);
@@ -186,6 +206,8 @@ export default function ArchivedDiagnosesPage() {
 		getDiagnoses(0);
 		setIsSearching(false);
 		setPage(0);
+		setProfessionSearch("");
+		setFinishedSearch("All");
 	};
 
 	const emptyRows = 10 - Math.min(10, count - page * 10);
@@ -254,13 +276,19 @@ export default function ArchivedDiagnosesPage() {
 					<Table className={classes.table} aria-label="simple table">
 						<TableHead>
 							<TableRow>
-								<TableCell>Doctor Full Name</TableCell>
-								<TableCell>Doctor Profession</TableCell>
-								<TableCell>Doctor Email</TableCell>
-								<TableCell>Patient Full Name</TableCell>
-								<TableCell>Is Finished</TableCell>
-								<TableCell>Deleted at</TableCell>
-								<TableCell>View Diagnosis</TableCell>
+								<TableCell className={classes.header}>
+									Doctor Full Name
+								</TableCell>
+								<TableCell className={classes.header}>
+									Doctor Profession
+								</TableCell>
+								<TableCell className={classes.header}>Doctor Email</TableCell>
+								<TableCell className={classes.header}>
+									Patient Full Name
+								</TableCell>
+								<TableCell className={classes.header}>Is Finished</TableCell>
+								<TableCell className={classes.header}>Deleted at</TableCell>
+								<TableCell className={classes.header}>View Diagnosis</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -286,6 +314,7 @@ export default function ArchivedDiagnosesPage() {
 										<Button
 											variant="outlined"
 											onClick={() => handleClickOpen(index)}
+											className={classes.viewBtn}
 										>
 											View diagnosis
 										</Button>
@@ -342,7 +371,7 @@ export default function ArchivedDiagnosesPage() {
 					{openedDiagnosis.isFinished && (
 						<>
 							<DialogContentText>Final Diagnosis</DialogContentText>
-							<div>{splitText(openedDiagnosis.finalDiagnosis)}</div>
+							<div>{splitText(openedDiagnosis.finalDiagnosis)}</div> <hr />
 						</>
 					)}
 					<DialogContentText>Created at</DialogContentText>

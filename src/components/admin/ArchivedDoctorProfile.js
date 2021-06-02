@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useHistory, useParams } from "react-router";
 import Button from "@material-ui/core/Button";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContentText from "@material-ui/core/DialogContentText";
@@ -31,8 +30,8 @@ const useStyles = makeStyles({
 	container: {
 		display: "grid",
 		alignItems: "center",
-		gridTemplateColumns: "3fr 5fr",
-		gridGap: "15%",
+		gridTemplateColumns: "4fr 6fr",
+		gridGap: "10%",
 	},
 	doctorContainer: {
 		display: "flex",
@@ -42,8 +41,8 @@ const useStyles = makeStyles({
 		textAlign: "center",
 	},
 	image: {
-		width: "240px",
-		height: "300px",
+		width: "280px",
+		height: "350px",
 	},
 	info: {
 		width: "100%",
@@ -76,10 +75,19 @@ const useStyles = makeStyles({
 		marginLeft: "auto",
 		marginRight: "15px",
 		boxShadow: "2px 2px 5px",
+		margin: "10px",
+		height: "95%",
 	},
 	noWarnings: {
 		textAlign: "center",
 		fontSize: "18px",
+	},
+	diagnosesContainer: {
+		padding: "10px",
+	},
+	header: {
+		fontWeight: "bold",
+		fontSize: "15px",
 	},
 });
 
@@ -182,12 +190,16 @@ export default function AdminDoctorProfile() {
 		const date = str.split("T")[0].split("-");
 		const time = str.split("T")[1].split(":");
 		return (
-			date[2] + "/" + date[1] + "/" + date[0] + " " + time[0] + ":" + time[1]
+			date[2] +
+			"/" +
+			date[1] +
+			"/" +
+			date[0] +
+			" " +
+			(parseInt(time[0]) + 4) +
+			":" +
+			time[1]
 		);
-	};
-
-	const back = () => {
-		history.push("/admin/archive/doctors");
 	};
 
 	const search = (skip, btn = false) => {
@@ -226,6 +238,8 @@ export default function AdminDoctorProfile() {
 		getDoctor(0);
 		setIsSearching(false);
 		setPageDiagnoses(0);
+		setPatientSearch("");
+		setFinishedSearch("All");
 	};
 
 	const emptyRowsWarning = 5 - Math.min(5, countWarning - pageWarning * 5);
@@ -234,9 +248,6 @@ export default function AdminDoctorProfile() {
 
 	return (
 		<>
-			<Button onClick={back} startIcon={<ArrowBackIcon />}>
-				Back to doctors archive page
-			</Button>
 			<div>
 				<div className={classes.container}>
 					<Paper className={classes.doctorContainer} elevation={5}>
@@ -307,121 +318,124 @@ export default function AdminDoctorProfile() {
 					</TableContainer>
 				</div>
 
-				{/* <div>
-					{warnings.length === 0 && <h1>The doctor had no warnings</h1>}
-					{warnings.map((warning) => (
-						<div>
-							<h1>Warning text: {warning.details}</h1>
-							<h2>Warning severity: {warning.severity}</h2>
-							<h3>Written at: {warning.date}</h3>
-						</div>
-					))}
-				</div> */}
-
 				{/* 	Diagnoses table		 */}
-				<h2>Diagnoses written by this doctor</h2>
+				<div className={classes.diagnosesContainer}>
+					<h2>Diagnoses written by this doctor</h2>
 
-				<div>
-					<TextField
-						variant="filled"
-						label="Search by patient name, surname and father name"
-						className={classes.search}
-						value={patientSearch}
-						onChange={onPatientSearchChange}
-					/>
-					<Button
-						aria-controls="simple-menu"
-						aria-haspopup="true"
-						onClick={handleClickMenu}
-						variant="outlined"
-						className={classes.finished}
-					>
-						Show diagnoses - {finishedSearch}
-					</Button>
-					<Button
-						startIcon={<SearchIcon />}
-						variant="contained"
-						color="primary"
-						className={classes.searchBtn}
-						onClick={() => search(0, true)}
-					>
-						Search
-					</Button>
-					<Button
-						variant="contained"
-						className={classes.clearBtn}
-						onClick={clearSearch}
-					>
-						Clear search
-					</Button>
-					<Menu
-						id="simple-menu"
-						anchorEl={anchorEl}
-						keepMounted
-						open={Boolean(anchorEl)}
-						onClose={handleCloseMenu}
-					>
-						<MenuItem onClick={() => finished("All")}>Show all</MenuItem>
-						<MenuItem onClick={() => finished("Finished")}>
-							Show finished
-						</MenuItem>
-						<MenuItem onClick={() => finished("Unfinished")}>
-							Show unfinished
-						</MenuItem>
-					</Menu>
-				</div>
+					<div>
+						<TextField
+							variant="filled"
+							label="Search by patient name, surname and father name"
+							className={classes.search}
+							value={patientSearch}
+							onChange={onPatientSearchChange}
+						/>
+						<Button
+							aria-controls="simple-menu"
+							aria-haspopup="true"
+							onClick={handleClickMenu}
+							variant="outlined"
+							className={classes.finished}
+						>
+							Show diagnoses - {finishedSearch}
+						</Button>
+						<Button
+							startIcon={<SearchIcon />}
+							variant="contained"
+							color="primary"
+							className={classes.searchBtn}
+							onClick={() => search(0, true)}
+						>
+							Search
+						</Button>
+						<Button
+							variant="contained"
+							className={classes.clearBtn}
+							onClick={clearSearch}
+						>
+							Clear search
+						</Button>
+						<Menu
+							id="simple-menu"
+							anchorEl={anchorEl}
+							keepMounted
+							open={Boolean(anchorEl)}
+							onClose={handleCloseMenu}
+						>
+							<MenuItem onClick={() => finished("All")}>Show all</MenuItem>
+							<MenuItem onClick={() => finished("Finished")}>
+								Show finished
+							</MenuItem>
+							<MenuItem onClick={() => finished("Unfinished")}>
+								Show unfinished
+							</MenuItem>
+						</Menu>
+					</div>
 
-				<div>
-					<TableContainer component={Paper}>
-						<Table className={classes.table} aria-label="simple table">
-							<TableHead>
-								<TableRow>
-									<TableCell>Patient full name</TableCell>
-									<TableCell>Diagnosis</TableCell>
-									<TableCell>Patient SSN</TableCell>
-									<TableCell>Is finished</TableCell>
-									<TableCell>Create date</TableCell>
-									<TableCell>Update date</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{diagnoses.map((diagnosis, index) => (
-									<TableRow key={diagnosis._id}>
-										<TableCell scope="row">
-											{diagnosis.patient.name} {diagnosis.patient.surname}{" "}
-											{diagnosis.patient.fatherName}
+					<div>
+						<TableContainer component={Paper}>
+							<Table className={classes.table} aria-label="simple table">
+								<TableHead>
+									<TableRow>
+										<TableCell className={classes.header}>
+											Patient full name
 										</TableCell>
-										<TableCell>
-											<Button
-												variant="outlined"
-												onClick={() => handleClickOpen(index)}
-											>
-												View diagnosis
-											</Button>
+										<TableCell className={classes.header}>Diagnosis</TableCell>
+										<TableCell className={classes.header}>
+											Patient SSN
 										</TableCell>
-										<TableCell>{diagnosis.patient.SSN}</TableCell>
-										<TableCell>{diagnosis.isFinished ? "Yes" : "No"}</TableCell>
-										<TableCell>{diagnosis.createdAt}</TableCell>
-										<TableCell>{diagnosis.updatedAt}</TableCell>
+										<TableCell className={classes.header}>
+											Is finished
+										</TableCell>
+										<TableCell className={classes.header}>
+											Create date
+										</TableCell>
+										<TableCell className={classes.header}>
+											Update date
+										</TableCell>
 									</TableRow>
-								))}
+								</TableHead>
+								<TableBody>
+									{diagnoses.map((diagnosis, index) => (
+										<TableRow key={diagnosis._id}>
+											<TableCell scope="row">
+												{diagnosis.patient.name} {diagnosis.patient.surname}{" "}
+												{diagnosis.patient.fatherName}
+											</TableCell>
+											<TableCell>
+												<Button
+													variant="outlined"
+													onClick={() => handleClickOpen(index)}
+												>
+													View diagnosis
+												</Button>
+											</TableCell>
+											<TableCell>{diagnosis.patient.SSN}</TableCell>
+											<TableCell>
+												{diagnosis.isFinished ? "Yes" : "No"}
+											</TableCell>
+											<TableCell>{diagnosis.createdAt}</TableCell>
+											<TableCell>{diagnosis.updatedAt}</TableCell>
+										</TableRow>
+									))}
 
-								{emptyRowsDiagnoses > 0 && (
-									<TableRow style={{ height: 53 * emptyRowsDiagnoses }}>
-										<TableCell colSpan={6} />
-									</TableRow>
-								)}
-							</TableBody>
-						</Table>
-					</TableContainer>
-					<TablePagination
-						component="div"
-						rowsPerPageOptions={[10]}
-						onChangePage={handleChangePageDiagnoses}
-						count={countDiagnoses}
-						page={pageDiagnoses}
-						rowsPerPage={10}
-					/>
+									{emptyRowsDiagnoses > 0 && (
+										<TableRow style={{ height: 53 * emptyRowsDiagnoses }}>
+											<TableCell colSpan={6} />
+										</TableRow>
+									)}
+								</TableBody>
+							</Table>
+						</TableContainer>
+						<TablePagination
+							component="div"
+							rowsPerPageOptions={[10]}
+							onChangePage={handleChangePageDiagnoses}
+							count={countDiagnoses}
+							page={pageDiagnoses}
+							rowsPerPage={10}
+						/>
+					</div>
 				</div>
 			</div>
 

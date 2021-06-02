@@ -1,4 +1,4 @@
-import { makeStyles, Paper } from "@material-ui/core";
+import { Button, makeStyles, Paper } from "@material-ui/core";
 import React, { useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import doctorAPI from "../api/doctor.api.js";
@@ -14,10 +14,16 @@ const useStyles = makeStyles({
 		margin: "10px",
 		textAlign: "center",
 		width: "100%",
+		display: "flex",
+		flexDirection: "column",
 	},
 	image: {
-		width: "240px",
-		height: "300px",
+		width: "280px",
+		height: "350px",
+	},
+	btn: {
+		marginLeft: "20px",
+		width: "200px",
 	},
 });
 
@@ -38,6 +44,10 @@ export default function ProfilePage() {
 			if (res.data.firstLogin) setFirstLogin(true);
 		});
 	}, [history]);
+
+	const patientsPage = () => {
+		history.push("/patients");
+	};
 
 	return doctor.name ? (
 		<div>
@@ -65,6 +75,15 @@ export default function ProfilePage() {
 					<p>Phone number: {doctor.phone ? doctor.phone : "Not registered"}</p>
 				</div>
 			</Paper>
+
+			<Button
+				variant="contained"
+				color="primary"
+				className={classes.btn}
+				onClick={patientsPage}
+			>
+				Patients Page
+			</Button>
 		</div>
 	) : (
 		<></>

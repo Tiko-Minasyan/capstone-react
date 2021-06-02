@@ -4,7 +4,6 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
@@ -32,10 +31,8 @@ const useStyles = makeStyles((theme) => ({
 export default function Header() {
 	const [doctor, setDoctor] = React.useState({});
 	const [anchorEl, setAnchorEl] = React.useState(null);
-	const [anchorElLinks, setAnchorElLinks] = React.useState(null);
 
 	const open = Boolean(anchorEl);
-	const openLinks = Boolean(anchorElLinks);
 
 	const classes = useStyles();
 	const history = useHistory();
@@ -50,21 +47,8 @@ export default function Header() {
 		setAnchorEl(event.currentTarget);
 	};
 
-	const handleMenuLinks = (event) => {
-		setAnchorElLinks(event.currentTarget);
-	};
-
 	const handleClose = () => {
 		setAnchorEl(null);
-	};
-
-	const handleCloseLinks = () => {
-		setAnchorElLinks(null);
-	};
-
-	const allPatients = () => {
-		handleCloseLinks();
-		history.push("/patients");
 	};
 
 	const profile = () => {
@@ -86,33 +70,6 @@ export default function Header() {
 		<div className={classes.root}>
 			<AppBar position="static">
 				<Toolbar>
-					<IconButton
-						aria-haspopup="true"
-						edge="start"
-						className={classes.menuButton}
-						color="inherit"
-						aria-label="menu"
-						onClick={handleMenuLinks}
-					>
-						<MenuIcon />
-					</IconButton>
-					<Menu
-						id="menu-appbar-links"
-						anchorEl={anchorElLinks}
-						anchorOrigin={{
-							vertical: "top",
-							horizontal: "right",
-						}}
-						keepMounted
-						transformOrigin={{
-							vertical: "top",
-							horizontal: "right",
-						}}
-						open={openLinks}
-						onClose={handleCloseLinks}
-					>
-						<MenuItem onClick={allPatients}>See All Patients</MenuItem>
-					</Menu>
 					<Typography variant="h6" className={classes.title}>
 						<span className={classes.pointer} onClick={profile}>
 							Medical Center Application

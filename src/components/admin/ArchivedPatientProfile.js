@@ -1,17 +1,23 @@
 import React, { useEffect } from "react";
 import { useHistory, useParams } from "react-router";
-import Button from "@material-ui/core/Button";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import adminAPI from "../../api/admin.api";
 import ArchivedDiagnoses from "./ArchivedDiagnoses";
-import { makeStyles, Paper } from "@material-ui/core";
+import { Divider, makeStyles, Paper } from "@material-ui/core";
 
 const useStyles = makeStyles({
 	container: {
-		width: "600px",
+		width: "800px",
 		textAlign: "center",
 		padding: "10px",
-		margin: "10px",
+		margin: "50px auto 10px",
+	},
+	diagnoses: {
+		padding: "10px",
+	},
+	infoDivide: {
+		display: "grid",
+		gridTemplateColumns: "10fr 1fr 10fr",
+		marginTop: "10px",
 	},
 });
 
@@ -60,31 +66,35 @@ export default function PatientProfile() {
 		return age;
 	};
 
-	const back = () => {
-		history.push("/admin/archive/patients");
-	};
-
 	return (
 		<div>
-			<Button onClick={back} startIcon={<ArrowBackIcon />}>
-				Back to patients archive page
-			</Button>
 			<Paper elevation={4} className={classes.container}>
 				<h3>
 					Patient full name: {patient.name} {patient.surname}{" "}
 					{patient.fatherName}
 				</h3>
-				<p>
-					Birth date: {birthday}, age: {getAge()}
-				</p>
-				<p>Phone number: {patient.phone ? patient.phone : "Not registered"}</p>
-				<p>Address: {patient.address}</p>
-				<p>Passport / ID card number: {patient.passportID}</p>
-				<p>SSN: {patient.SSN}</p>
-				<p>Delete reason: {patient.deleteReason}</p>
-				<p>Deleted at: {patient.deletedAt}</p>
+				<Divider />
+				<div className={classes.infoDivide}>
+					<div>
+						<p>Birth date: {birthday}</p>
+						<p>Age: {getAge()}</p>
+						<p>
+							Phone number: {patient.phone ? patient.phone : "Not registered"}
+						</p>
+						<p>Address: {patient.address}</p>
+					</div>
+					<Divider orientation="vertical" />
+					<div>
+						<p>Passport / ID card number: {patient.passportID}</p>
+						<p>SSN: {patient.SSN}</p>
+						<p>Delete reason: {patient.deleteReason}</p>
+						<p>Deleted at: {patient.deletedAt}</p>
+					</div>
+				</div>
 			</Paper>
-			<ArchivedDiagnoses />
+			<div className={classes.diagnoses}>
+				<ArchivedDiagnoses />
+			</div>
 		</div>
 	);
 }

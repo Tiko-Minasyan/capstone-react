@@ -8,16 +8,14 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import "date-fns";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import patientAPI from "../api/patient.api";
 import Diagnoses from "./Diagnoses";
-import { makeStyles, Paper } from "@material-ui/core";
+import { Divider, makeStyles, Paper } from "@material-ui/core";
 
 const useStyles = makeStyles({
 	patientContainer: {
 		display: "flex",
 		alignItems: "center",
-		justifyContent: "space-between",
 	},
 	container: {
 		width: "600px",
@@ -25,14 +23,16 @@ const useStyles = makeStyles({
 		padding: "10px",
 		margin: "10px",
 	},
-	flex: {
+	btnDiv: {
 		display: "flex",
-		justifyContent: "space-between",
-		alignItems: "center",
-		height: "20px",
+		flexDirection: "column",
+		marginLeft: "40px",
 	},
 	btn: {
-		marginRight: "20px",
+		marginTop: "20px",
+	},
+	diagnoses: {
+		padding: "10px",
 	},
 });
 
@@ -137,25 +137,17 @@ export default function PatientProfile() {
 		}
 	};
 
-	const back = () => {
-		history.push("/patients");
-	};
-
 	return (
 		<div>
-			<Button onClick={back} startIcon={<ArrowBackIcon />}>
-				Back to patients page
-			</Button>
 			<div className={classes.patientContainer}>
 				<Paper elevation={4} className={classes.container}>
 					<h3>
 						Patient full name: {patient.name} {patient.surname}{" "}
 						{patient.fatherName}
 					</h3>
-					<p>
-						Birth date: {birthday}, age: {getAge()}
-					</p>
-
+					<Divider />
+					<p>Birth date: {birthday}</p>
+					<p>Age: {getAge()}</p>
 					<p>
 						Phone number: {patient.phone ? patient.phone : "Not registered"}
 					</p>
@@ -163,7 +155,7 @@ export default function PatientProfile() {
 					<p>Passport / ID card number: {patient.passportID}</p>
 					<p>SSN: {patient.SSN}</p>
 				</Paper>
-				<div>
+				<div className={classes.btnDiv}>
 					<Button
 						variant="contained"
 						color="primary"
@@ -182,8 +174,9 @@ export default function PatientProfile() {
 					</Button>
 				</div>
 			</div>
-			<Diagnoses />
-
+			<div className={classes.diagnoses}>
+				<Diagnoses />
+			</div>
 			<div>
 				<Dialog
 					open={openEdit}

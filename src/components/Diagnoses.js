@@ -297,7 +297,15 @@ export default function Diagnoses() {
 		const date = str.split("T")[0].split("-");
 		const time = str.split("T")[1].split(":");
 		return (
-			date[2] + "/" + date[1] + "/" + date[0] + " " + time[0] + ":" + time[1]
+			date[2] +
+			"/" +
+			date[1] +
+			"/" +
+			date[0] +
+			" " +
+			(parseInt(time[0]) + 4) +
+			":" +
+			time[1]
 		);
 	};
 

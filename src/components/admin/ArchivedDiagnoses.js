@@ -64,6 +64,10 @@ const useStyles = makeStyles({
 		marginLeft: "10px",
 		width: "160px",
 	},
+	header: {
+		fontWeight: "bold",
+		fontSize: "15px",
+	},
 });
 
 export default function Diagnoses() {
@@ -125,7 +129,15 @@ export default function Diagnoses() {
 		const date = str.split("T")[0].split("-");
 		const time = str.split("T")[1].split(":");
 		return (
-			date[2] + "/" + date[1] + "/" + date[0] + " " + time[0] + ":" + time[1]
+			date[2] +
+			"/" +
+			date[1] +
+			"/" +
+			date[0] +
+			" " +
+			(parseInt(time[0]) + 4) +
+			":" +
+			time[1]
 		);
 	};
 
@@ -186,6 +198,8 @@ export default function Diagnoses() {
 		getDiagnoses(0);
 		setIsSearching(false);
 		setPage(0);
+		setProfessionSearch("");
+		setFinishedSearch("All");
 	};
 
 	const emptyRows = 10 - Math.min(10, count - page * 10);
@@ -251,12 +265,14 @@ export default function Diagnoses() {
 				<Table className={classes.table} aria-label="simple table">
 					<TableHead>
 						<TableRow>
-							<TableCell>Doctor profession</TableCell>
-							<TableCell>Diagnosis</TableCell>
-							<TableCell>Doctor full name</TableCell>
-							<TableCell>Is finished</TableCell>
-							<TableCell>Create date</TableCell>
-							<TableCell>Update date</TableCell>
+							<TableCell className={classes.header}>
+								Doctor profession
+							</TableCell>
+							<TableCell className={classes.header}>Diagnosis</TableCell>
+							<TableCell className={classes.header}>Doctor full name</TableCell>
+							<TableCell className={classes.header}>Is finished</TableCell>
+							<TableCell className={classes.header}>Create date</TableCell>
+							<TableCell className={classes.header}>Update date</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
